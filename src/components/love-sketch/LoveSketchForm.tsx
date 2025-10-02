@@ -4,19 +4,35 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useUserData } from "@/hooks/useUserData";
 import { useDailyLimits } from "@/hooks/useDailyLimits";
+import { useAuth } from "@/hooks/useAuth";
 import { getZodiacSign } from "@/utils/horoscope";
 import { Loader2, Sparkles, Clock, Heart } from "lucide-react";
 
 const formSchema = z.object({
-  promptDescription: z.string().min(10, "Describe with more details (minimum 10 characters)"),
+  promptDescription: z
+    .string()
+    .min(10, "Describe with more details (minimum 10 characters)"),
   physicalTraits: z.string().min(5, "Describe some physical characteristics"),
   personalityTraits: z.string().min(5, "Describe the personality"),
   artisticStyle: z.string().min(1, "Select an artistic style"),
@@ -27,15 +43,26 @@ interface LoveSketchFormProps {
   onSketchGenerated: () => void;
 }
 
-export function LoveSketchForm({ userProfile, onSketchGenerated }: LoveSketchFormProps) {
+export function LoveSketchForm({
+  userProfile,
+  onSketchGenerated,
+}: LoveSketchFormProps) {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedSketch, setGeneratedSketch] = useState<{
     imageUrl: string;
     interpretation: string;
   } | null>(null);
+  const { session } = useAuth();
   const { addActivity } = useUserData();
-  const { dailyCount, limitReached, isLoading, maxLimit, remainingAttempts, refreshLimit, getResetTime } = 
-    useDailyLimits('love_sketches', 2);
+  const {
+    dailyCount,
+    limitReached,
+    isLoading,
+    maxLimit,
+    remainingAttempts,
+    refreshLimit,
+    getResetTime,
+  } = useDailyLimits("love_sketches", 2);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -63,75 +90,111 @@ export function LoveSketchForm({ userProfile, onSketchGenerated }: LoveSketchFor
     }
 
     setIsGenerating(true);
-    
+
     try {
-      const userSign = userProfile.birth_date ? getZodiacSign(userProfile.birth_date) : "Aquarius";
+      const userSign = userProfile.birth_date
+        ? getZodiacSign(userProfile.birth_date)
+        : "Aquarius";
       const elements = {
-        "Aries": "Fire", "Leo": "Fire", "Sagittarius": "Fire",
-        "Taurus": "Earth", "Virgo": "Earth", "Capricorn": "Earth",
-        "Gemini": "Air", "Libra": "Air", "Aquarius": "Air",
-        "Cancer": "Water", "Scorpio": "Water", "Pisces": "Water"
+        Aries: "Fire",
+        Leo: "Fire",
+        Sagittarius: "Fire",
+        Taurus: "Earth",
+        Virgo: "Earth",
+        Capricorn: "Earth",
+        Gemini: "Air",
+        Libra: "Air",
+        Aquarius: "Air",
+        Cancer: "Water",
+        Scorpio: "Water",
+        Pisces: "Water",
       };
       const userElement = elements[userSign as keyof typeof elements] || "Air";
 
-      // Generate image using Supabase Edge Function
-      const { data, error } = await supabase.functions.invoke('generate-love-sketch', {
-        body: {
-          ...values,
-          userSign,
-          userElement
+      // Generate image using Supabase Edge Function with explicit auth token
+      const { data, error } = await supabase.functions.invoke(
+        "generate-love-sketch",
+        {
+          body: {
+            ...values,
+            userSign,
+            userElement,
+          },
+          headers: session?.access_token
+            ? {
+                Authorization: `Bearer ${session.access_token}`,
+              }
+            : undefined,
         }
-      });
+      );
 
       if (error) throw error;
 
       // Save to database
-      const { error: saveError } = await supabase
-        .from('love_sketches')
-        .insert({
-          user_id: userProfile.user_id,
-          prompt_description: values.promptDescription,
-          physical_traits: values.physicalTraits,
-          personality_traits: values.personalityTraits,
-          artistic_style: values.artisticStyle,
-          astrological_elements: `${userSign} - ${userElement}`,
-          image_url: data.imageUrl,
-          interpretation: data.interpretation
-        });
+      const { error: saveError } = await supabase.from("love_sketches").insert({
+        user_id: userProfile.user_id,
+        prompt_description: values.promptDescription,
+        physical_traits: values.physicalTraits,
+        personality_traits: values.personalityTraits,
+        artistic_style: values.artisticStyle,
+        astrological_elements: `${userSign} - ${userElement}`,
+        image_url: data.imageUrl,
+        interpretation: data.interpretation,
+      });
 
       if (saveError) throw saveError;
 
       setGeneratedSketch({
         imageUrl: data.imageUrl,
-        interpretation: data.interpretation
+        interpretation: data.interpretation,
       });
 
       // Award points for creating sketch
-      await addActivity('ia_consulta');
-      
+      await addActivity("ia_consulta");
+
       // Refresh limit counter
       refreshLimit();
-      
+
       toast.success("Love sketch created successfully!");
       onSketchGenerated();
-      
     } catch (error: any) {
-      console.error('Error generating love sketch:', error);
-      
-      let errorMessage = "Tente novamente mais tarde";
-      
-      // Handle specific error types
-      if (error.message?.includes('limite diário') || error.message?.includes('Daily limit')) {
-        errorMessage = "Você atingiu o limite diário de 2 love sketches. Volte amanhã!";
-      } else if (error.message?.includes('créditos') || error.message?.includes('quota')) {
-        errorMessage = "Sistema temporariamente indisponível. Entre em contato com o suporte.";
-      } else if (error.message?.includes('Unauthorized') || error.message?.includes('autorizado')) {
-        errorMessage = "Sessão expirada. Faça login novamente.";
+      console.error("Error generating love sketch:", error);
+
+      let errorMessage = "Please try again later";
+
+      // Try to extract error message from response
+      if (error.context?.body) {
+        try {
+          const errorBody =
+            typeof error.context.body === "string"
+              ? JSON.parse(error.context.body)
+              : error.context.body;
+
+          if (errorBody.error) {
+            errorMessage = errorBody.error;
+          }
+        } catch (parseError) {
+          console.error("Could not parse error body:", parseError);
+        }
       } else if (error.message) {
         errorMessage = error.message;
       }
-      
-      toast.error(`Erro ao gerar sketch: ${errorMessage}`);
+
+      // Handle specific status codes
+      if (error.context?.status === 429) {
+        errorMessage =
+          "Daily limit reached. You can create up to 2 love sketches per day. Try again tomorrow!";
+      } else if (error.context?.status === 401) {
+        errorMessage = "Session expired. Please log in again.";
+      } else if (
+        error.context?.status === 500 &&
+        errorMessage.includes("credits")
+      ) {
+        errorMessage =
+          "System temporarily unavailable. Please contact support.";
+      }
+
+      toast.error(errorMessage);
     } finally {
       setIsGenerating(false);
     }
@@ -153,26 +216,33 @@ export function LoveSketchForm({ userProfile, onSketchGenerated }: LoveSketchFor
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="flex justify-center">
-            <img 
-              src={generatedSketch.imageUrl} 
+            <img
+              src={generatedSketch.imageUrl}
               alt="Love Sketch"
               className="rounded-lg shadow-lg max-w-md w-full"
             />
           </div>
-          
+
           <div className="bg-primary/10 rounded-lg p-4">
-            <h3 className="font-cinzel text-lg text-foreground mb-2">Mystical Interpretation</h3>
-            <p className="text-foreground/80 leading-relaxed">{generatedSketch.interpretation}</p>
+            <h3 className="font-cinzel text-lg text-foreground mb-2">
+              Mystical Interpretation
+            </h3>
+            <p className="text-foreground/80 leading-relaxed">
+              {generatedSketch.interpretation}
+            </p>
           </div>
 
           <div className="flex justify-center space-x-4">
-            <Button 
+            <Button
               onClick={() => toast.success("Sketch saved to your gallery!")}
               className="bg-accent hover:bg-accent/90"
             >
               Save to Gallery
             </Button>
-            <Button onClick={handleNewSketch} className="bg-primary hover:bg-primary/90">
+            <Button
+              onClick={handleNewSketch}
+              className="bg-primary hover:bg-primary/90"
+            >
               Create New Sketch
             </Button>
           </div>
@@ -194,16 +264,24 @@ export function LoveSketchForm({ userProfile, onSketchGenerated }: LoveSketchFor
           {isLoading ? (
             <div className="flex items-center justify-center p-3 bg-muted/50 rounded-lg">
               <Loader2 className="h-4 w-4 animate-spin mr-2" />
-              <span className="text-sm text-muted-foreground">Checking daily limit...</span>
+              <span className="text-sm text-muted-foreground">
+                Checking daily limit...
+              </span>
             </div>
           ) : limitReached ? (
             <Alert className="border-destructive/50 bg-destructive/10">
               <Clock className="h-4 w-4" />
               <AlertDescription className="text-foreground">
-                <strong>Daily limit reached!</strong> You've created {dailyCount}/{maxLimit} love sketches today.
+                <strong>Daily limit reached!</strong> You've created{" "}
+                {dailyCount}/{maxLimit} love sketches today.
                 <br />
                 <span className="text-sm text-muted-foreground">
-                  Reset at midnight ({getResetTime().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })})
+                  Reset at midnight (
+                  {getResetTime().toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                  )
                 </span>
               </AlertDescription>
             </Alert>
@@ -216,7 +294,8 @@ export function LoveSketchForm({ userProfile, onSketchGenerated }: LoveSketchFor
                 </span>
               </div>
               <span className="text-xs text-muted-foreground">
-                {remainingAttempts} {remainingAttempts === 1 ? 'remaining' : 'remaining'}
+                {remainingAttempts}{" "}
+                {remainingAttempts === 1 ? "remaining" : "remaining"}
               </span>
             </div>
           )}
@@ -229,7 +308,9 @@ export function LoveSketchForm({ userProfile, onSketchGenerated }: LoveSketchFor
               name="promptDescription"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-foreground">General Description</FormLabel>
+                  <FormLabel className="text-foreground">
+                    General Description
+                  </FormLabel>
                   <FormControl>
                     <Textarea
                       placeholder="Describe the special person you would like to visualize... Talk about the connection you feel, special moments, or simply how you imagine them..."
@@ -248,7 +329,9 @@ export function LoveSketchForm({ userProfile, onSketchGenerated }: LoveSketchFor
                 name="physicalTraits"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground">Physical Characteristics</FormLabel>
+                    <FormLabel className="text-foreground">
+                      Physical Characteristics
+                    </FormLabel>
                     <FormControl>
                       <Textarea
                         placeholder="Eye color, hair, height, distinctive features..."
@@ -266,7 +349,9 @@ export function LoveSketchForm({ userProfile, onSketchGenerated }: LoveSketchFor
                 name="personalityTraits"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground">Personality and Energy</FormLabel>
+                    <FormLabel className="text-foreground">
+                      Personality and Energy
+                    </FormLabel>
                     <FormControl>
                       <Textarea
                         placeholder="Caring, adventurous, intellectual, spiritual..."
@@ -285,8 +370,13 @@ export function LoveSketchForm({ userProfile, onSketchGenerated }: LoveSketchFor
               name="artisticStyle"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-foreground">Artistic Style</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormLabel className="text-foreground">
+                    Artistic Style
+                  </FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
                     <FormControl>
                       <SelectTrigger className="bg-background/50">
                         <SelectValue placeholder="Choose the sketch style" />
@@ -305,8 +395,8 @@ export function LoveSketchForm({ userProfile, onSketchGenerated }: LoveSketchFor
               )}
             />
 
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               disabled={isGenerating || limitReached}
               className="w-full bg-primary hover:bg-primary/90 text-white py-6 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
             >
