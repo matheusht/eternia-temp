@@ -9,16 +9,11 @@ const corsHeaders = {
 
 interface CartPandaWebhookPayload {
   event: string;
-  data: {
-    order?: {
-      customer?: {
-        email?: string;
-      };
-    };
+  order: {
+    email?: string;
     customer?: {
       email?: string;
     };
-    email?: string;
   };
 }
 
@@ -32,41 +27,19 @@ const handler = async (req: Request): Promise<Response> => {
     console.log("Method:", req.method);
     console.log("Headers:", Object.fromEntries(req.headers.entries()));
 
-    const shopToken =
-      req.headers.get("x-shop-token") ||
-      req.headers.get("authorization")?.replace("Bearer ", "");
-    const expectedShopToken = Deno.env.get("CARTPANDA_SHOP_TOKEN");
-
-    console.log("Token validation:", {
-      hasToken: !!shopToken,
-      hasExpectedToken: !!expectedShopToken,
-      tokensMatch: shopToken === expectedShopToken,
-    });
-
-    if (expectedShopToken && shopToken !== expectedShopToken) {
-      console.error("Invalid shop token");
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { "Content-Type": "application/json", ...corsHeaders },
-      });
-    }
-
     const payload: CartPandaWebhookPayload = await req.json();
 
-    console.log("Received CartPanda webhook:", payload.event);
+    console.log("Received CartPanda webhook event:", payload.event);
     console.log("Full payload:", JSON.stringify(payload, null, 2));
 
     let customerEmail: string | undefined;
 
-    if (payload.data.order?.customer?.email) {
-      customerEmail = payload.data.order.customer.email;
-      console.log("Email found in: data.order.customer.email");
-    } else if (payload.data.customer?.email) {
-      customerEmail = payload.data.customer.email;
-      console.log("Email found in: data.customer.email");
-    } else if (payload.data.email) {
-      customerEmail = payload.data.email;
-      console.log("Email found in: data.email");
+    if (payload.order?.email) {
+      customerEmail = payload.order.email;
+      console.log("Email found at: order.email");
+    } else if (payload.order?.customer?.email) {
+      customerEmail = payload.order.customer.email;
+      console.log("Email found at: order.customer.email");
     }
 
     if (!customerEmail) {

@@ -10,41 +10,32 @@ This Supabase Edge Function handles incoming webhooks from CartPanda and automat
 supabase functions deploy cartpanda-webhook
 ```
 
-### 2. Set Environment Variables
+### 2. Configure CartPanda Webhook
 
-Set the required secrets for the function:
-
-```bash
-supabase secrets set CARTPANDA_SHOP_TOKEN="UaqGx94ftZKBjMY6kyO8TgA9gvJwZ92ZC051cBTLpppOSkmO1jV8hwBFsfxp"
-```
-
-The `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` are automatically available in Supabase Edge Functions.
-
-### 3. Configure CartPanda Webhook
+**Note:** No environment variables needed! The `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` are automatically available in Supabase Edge Functions.
 
 1. Go to your CartPanda dashboard for shop "ondigital"
 2. Navigate to Settings > Webhooks (or API/Integrations section)
 3. Create a new webhook with:
-   - **Event**: Purchase/Order Created (or similar purchase event)
+   - **Event**: Purchase/Order Fulfilled (or the event you want to trigger on)
    - **URL**: `https://ksxqdqycevtbmwetjtwt.supabase.co/functions/v1/cartpanda-webhook`
-   - **Headers** (optional for extra security):
-     - `x-shop-token`: `UaqGx94ftZKBjMY6kyO8TgA9gvJwZ92ZC051cBTLpppOSkmO1jV8hwBFsfxp`
 
-### 4. Test the Webhook
+### 3. Test the Webhook
 
 You can test the webhook manually using curl:
 
 ```bash
 curl -X POST https://ksxqdqycevtbmwetjtwt.supabase.co/functions/v1/cartpanda-webhook \
   -H "Content-Type: application/json" \
-  -H "x-shop-token: UaqGx94ftZKBjMY6kyO8TgA9gvJwZ92ZC051cBTLpppOSkmO1jV8hwBFsfxp" \
   -d '{
-    "event": "purchase.completed",
-    "data": {
-      "order": {
-        "customer": {
-          "email": "test@example.com"
-        }
+    "event": "order.fulfilled",
+    "order": {
+      "id": 12345,
+      "email": "test@example.com",
+      "customer": {
+        "email": "test@example.com",
+        "first_name": "Test",
+        "last_name": "User"
       }
     }
   }'
@@ -62,16 +53,32 @@ curl -X POST https://ksxqdqycevtbmwetjtwt.supabase.co/functions/v1/cartpanda-web
 
 ## Security
 
-The function validates the shop token to ensure requests are coming from your CartPanda shop. The token can be sent via:
-- `x-shop-token` header
-- `Authorization: Bearer TOKEN` header
+The webhook is configured to accept all incoming requests from CartPanda without token validation, as CartPanda does not send custom authentication headers. The webhook is protected by:
+- Being a non-obvious URL
+- CORS headers
+- Supabase's built-in security
 
 ## Payload Structure
 
-The function handles various CartPanda webhook payload structures:
-- `data.order.customer.email`
-- `data.customer.email`
-- `data.email`
+CartPanda sends webhooks with this structure:
+```json
+{
+  "event": "order.fulfilled",
+  "order": {
+    "id": 40586315,
+    "email": "customer@example.com",
+    "customer": {
+      "email": "customer@example.com",
+      "first_name": "John",
+      "last_name": "Doe"
+    }
+  }
+}
+```
+
+The function extracts email from:
+- `order.email` (primary)
+- `order.customer.email` (fallback)
 
 ## Debugging
 
@@ -113,30 +120,18 @@ After a webhook is triggered:
 Test different payload structures:
 
 ```bash
-# Test with order.customer.email structure
+# Test with CartPanda structure
 curl -X POST https://ksxqdqycevtbmwetjtwt.supabase.co/functions/v1/cartpanda-webhook \
   -H "Content-Type: application/json" \
-  -H "x-shop-token: UaqGx94ftZKBjMY6kyO8TgA9gvJwZ92ZC051cBTLpppOSkmO1jV8hwBFsfxp" \
   -d '{
-    "event": "purchase.completed",
-    "data": {
-      "order": {
-        "customer": {
-          "email": "test1@example.com"
-        }
-      }
-    }
-  }'
-
-# Test with customer.email structure
-curl -X POST https://ksxqdqycevtbmwetjtwt.supabase.co/functions/v1/cartpanda-webhook \
-  -H "Content-Type: application/json" \
-  -H "x-shop-token: UaqGx94ftZKBjMY6kyO8TgA9gvJwZ92ZC051cBTLpppOSkmO1jV8hwBFsfxp" \
-  -d '{
-    "event": "purchase.completed",
-    "data": {
+    "event": "order.fulfilled",
+    "order": {
+      "id": 12345,
+      "email": "test@example.com",
       "customer": {
-        "email": "test2@example.com"
+        "email": "test@example.com",
+        "first_name": "Test",
+        "last_name": "User"
       }
     }
   }'
