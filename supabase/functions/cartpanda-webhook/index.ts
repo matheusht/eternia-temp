@@ -28,10 +28,20 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
+    console.log("=== Incoming webhook request ===");
+    console.log("Method:", req.method);
+    console.log("Headers:", Object.fromEntries(req.headers.entries()));
+
     const shopToken =
       req.headers.get("x-shop-token") ||
       req.headers.get("authorization")?.replace("Bearer ", "");
     const expectedShopToken = Deno.env.get("CARTPANDA_SHOP_TOKEN");
+
+    console.log("Token validation:", {
+      hasToken: !!shopToken,
+      hasExpectedToken: !!expectedShopToken,
+      tokensMatch: shopToken === expectedShopToken,
+    });
 
     if (expectedShopToken && shopToken !== expectedShopToken) {
       console.error("Invalid shop token");
@@ -44,15 +54,19 @@ const handler = async (req: Request): Promise<Response> => {
     const payload: CartPandaWebhookPayload = await req.json();
 
     console.log("Received CartPanda webhook:", payload.event);
+    console.log("Full payload:", JSON.stringify(payload, null, 2));
 
     let customerEmail: string | undefined;
 
     if (payload.data.order?.customer?.email) {
       customerEmail = payload.data.order.customer.email;
+      console.log("Email found in: data.order.customer.email");
     } else if (payload.data.customer?.email) {
       customerEmail = payload.data.customer.email;
+      console.log("Email found in: data.customer.email");
     } else if (payload.data.email) {
       customerEmail = payload.data.email;
+      console.log("Email found in: data.email");
     }
 
     if (!customerEmail) {
