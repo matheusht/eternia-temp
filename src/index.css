@@ -1,0 +1,214 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Luxurious cosmic theme - inspired by astrological elegance */
+    --background: 241 32% 18%;  /* Deep Cosmic Purple #3E1F47 */
+    --foreground: 240 13% 95%;  /* Ethereal White #F4F4F9 */
+
+    --card: 228 36% 17%;        /* Midnight Blue #1B1F3B */
+    --card-foreground: 240 13% 95%;
+
+    --popover: 228 36% 17%;
+    --popover-foreground: 240 13% 95%;
+
+    /* Celestial Gold as primary */
+    --primary: 47 89% 61%;      /* Celestial Gold #F9C846 */
+    --primary-foreground: 241 32% 18%;
+
+    /* Soft Rose Quartz as secondary */
+    --secondary: 346 35% 82%;   /* Soft Rose Quartz #E6B7C2 */
+    --secondary-foreground: 241 32% 18%;
+
+    --muted: 228 36% 15%;
+    --muted-foreground: 240 8% 70%;
+
+    /* Rose Quartz accent for romantic touches */
+    --accent: 346 35% 75%;
+    --accent-foreground: 241 32% 18%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 240 13% 95%;
+
+    --border: 228 36% 22%;
+    --input: 228 36% 15%;
+    --ring: 47 89% 61%;
+
+    --radius: 0.75rem;
+
+    /* Luxurious cosmic gradients */
+    --gradient-cosmic: linear-gradient(135deg, hsl(241, 32%, 18%), hsl(47, 89%, 61%), hsl(228, 36%, 17%));
+    --gradient-mystic: linear-gradient(180deg, hsl(228, 36%, 17%), hsl(241, 32%, 20%));
+    --gradient-aura: linear-gradient(45deg, hsl(241, 32%, 18%) 0%, hsl(346, 35%, 82%) 30%, hsl(47, 89%, 61%) 100%);
+    --gradient-ethereal: linear-gradient(135deg, hsl(346, 35%, 82%), hsl(240, 13%, 95%));
+    --gradient-primary: linear-gradient(135deg, hsl(47, 89%, 61%), hsl(346, 35%, 82%));
+    --gradient-secondary: linear-gradient(135deg, hsl(346, 35%, 82%), hsl(241, 32%, 18%));
+    
+    /* Elegant shadows with cosmic depth */
+    --shadow-mystic: 0 10px 40px -10px hsl(47 89% 61% / 0.3);
+    --shadow-ethereal: 0 0 60px hsl(346 35% 82% / 0.4);
+    --shadow-cosmic: 0 25px 50px -12px hsl(228 36% 17% / 0.8);
+    --shadow-gold: 0 8px 32px -8px hsl(47 89% 61% / 0.25);
+
+    /* Animations */
+    --transition-mystic: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-ethereal: all 0.6s cubic-bezier(0.25, 0.1, 0.25, 1);
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  /* Light mode luxurious theme */
+  .light {
+    --background: 240 13% 97%;  /* Ethereal White base */
+    --foreground: 241 32% 18%;  /* Deep Cosmic Purple text */
+    --card: 240 13% 95%;
+    --card-foreground: 241 32% 18%;
+    --primary: 47 89% 55%;      /* Slightly darker gold for light mode */
+    --secondary: 346 35% 88%;   /* Lighter rose quartz */
+    --muted: 240 13% 92%;
+    --border: 228 36% 85%;
+    --input: 240 13% 90%;
+    --ring: 47 89% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-inter;
+    background: var(--gradient-mystic);
+  }
+
+  h1, h2, h3, .brand-title {
+    @apply font-cinzel;
+  }
+
+  .cosmic-glow {
+    box-shadow: var(--shadow-ethereal);
+  }
+
+  .mystic-border {
+    border: 1px solid hsl(var(--border));
+    background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--muted)) 100%);
+  }
+
+  .ethereal-text {
+    background: var(--gradient-cosmic);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .gold-glow {
+    box-shadow: var(--shadow-gold);
+  }
+
+  .luxury-card {
+    background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--muted)) 100%);
+    border: 1px solid hsl(var(--primary) / 0.2);
+  }
+
+  .aura-glow {
+    position: relative;
+  }
+
+  .aura-glow::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    background: var(--gradient-aura);
+    border-radius: inherit;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+  }
+
+  .aura-glow:hover::before {
+    opacity: 0.6;
+  }
+
+  /* Tab navigation animations */
+  .tab-button {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .tab-button:hover {
+    transform: scale(1.02);
+  }
+
+  .tab-button.active {
+    transform: scale(1.05);
+  }
+
+  /* Practice button completion animation */
+  .practice-complete {
+    animation: practiceSuccess 0.6s ease-out;
+  }
+
+  @keyframes practiceSuccess {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); background-color: hsl(142 76% 36%); }
+    100% { transform: scale(1); }
+  }
+}
+
+/* Mobile anti-zoom and touch rules */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+@media screen and (max-width: 768px) {
+  /* Prevent zoom on input focus */
+  input, select, textarea, button {
+    font-size: 16px !important;
+    transform-origin: left top;
+    zoom: 1 !important;
+  }
+  
+  /* Prevent zoom on double tap */
+  * {
+    touch-action: manipulation !important;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  /* Prevent viewport zoom */
+  html, body {
+    overflow-x: hidden;
+    position: relative;
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+  }
+  
+  /* Specific fixes for cards and containers */
+  .luxury-card, .container, [class*="mx-auto"] {
+    max-width: 100vw !important;
+    overflow-x: hidden;
+  }
+}

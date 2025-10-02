@@ -1,0 +1,14 @@
+{
+  "appId": "app.lovable.3c3b508a7b85477ea662882045b344f1",
+  "appName": "mystic-journey",
+  "webDir": "dist",
+  "server": {
+    "url": "https://3c3b508a-7b85-477e-a662-882045b344f1.lovableproject.com?forceHideBadge=true",
+    "cleartext": true
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 0
+    }
+  }
+}

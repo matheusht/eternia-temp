@@ -1,0 +1,4 @@
+project_id = "ksxqdqycevtbmwetjtwt"
+
+[functions.generate-love-sketch]
+verify_jwt = true
