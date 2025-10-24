@@ -1,4 +1,5 @@
 import { User, UserCheck } from "lucide-react";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface GenderSelectionProps {
   selectedGender: string;
@@ -6,17 +7,19 @@ interface GenderSelectionProps {
 }
 
 export const GenderSelection = ({ selectedGender, onGenderSelect }: GenderSelectionProps) => {
+  const { t } = useTranslation();
+  
   const genderOptions = [
     {
       id: "female",
-      label: "Female",
+      label: t('onboarding.genders.female'),
       icon: User,
       gradient: "from-pink-500/20 to-purple-500/20",
       color: "text-pink-400"
     },
     {
       id: "male", 
-      label: "Male",
+      label: t('onboarding.genders.male'),
       icon: UserCheck,
       gradient: "from-blue-500/20 to-cyan-500/20",
       color: "text-blue-400"
@@ -26,9 +29,9 @@ export const GenderSelection = ({ selectedGender, onGenderSelect }: GenderSelect
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="text-center space-y-2">
-        <h2 className="text-2xl font-playfair ethereal-text">What is your gender?</h2>
+        <h2 className="text-2xl font-playfair ethereal-text">{t('onboarding.genderTitle')}</h2>
         <p className="text-muted-foreground">
-          This helps us better personalize your astrological predictions
+          {t('onboarding.genderDescription')}
         </p>
       </div>
 

@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Heart, Star, Crown, Sparkles, Users, Zap } from "lucide-react";
 import { getZodiacSign } from "@/utils/horoscope";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface MarriageCompatibilityProps {
   userBirthDate?: string;
@@ -12,6 +13,7 @@ interface MarriageCompatibilityProps {
 }
 
 export const MarriageCompatibility = ({ userBirthDate, className = "" }: MarriageCompatibilityProps) => {
+  const { t } = useTranslation();
   const [userSign, setUserSign] = useState<string>("");
   const [partnerSign, setPartnerSign] = useState<string>("");
   const [compatibilityData, setCompatibilityData] = useState<any>(null);
@@ -213,22 +215,22 @@ export const MarriageCompatibility = ({ userBirthDate, className = "" }: Marriag
   };
 
   const getCompatibilityLevel = (score: number) => {
-    if (score >= 90) return { level: "Soul Mates", icon: Crown, color: "text-primary" };
-    if (score >= 80) return { level: "Excellent", icon: Star, color: "text-primary" };
-    if (score >= 70) return { level: "Great", icon: Heart, color: "text-secondary" };
-    if (score >= 60) return { level: "Good", icon: Users, color: "text-secondary" };
-    if (score >= 50) return { level: "Moderate", icon: Zap, color: "text-primary" };
-    return { level: "Challenging", icon: Sparkles, color: "text-muted-foreground" };
+    if (score >= 90) return { level: t('compatibility.levels.soulmates') || "Soul Mates", icon: Crown, color: "text-primary" };
+    if (score >= 80) return { level: t('compatibility.levels.excellent') || "Excellent", icon: Star, color: "text-primary" };
+    if (score >= 70) return { level: t('compatibility.levels.great') || "Great", icon: Heart, color: "text-secondary" };
+    if (score >= 60) return { level: t('compatibility.levels.good') || "Good", icon: Users, color: "text-secondary" };
+    if (score >= 50) return { level: t('compatibility.levels.moderate') || "Moderate", icon: Zap, color: "text-primary" };
+    return { level: t('compatibility.levels.challenging') || "Challenging", icon: Sparkles, color: "text-muted-foreground" };
   };
 
   return (
     <div className={`space-y-6 ${className}`}>
       <div className="text-center space-y-4">
         <h2 className="text-3xl font-cinzel font-bold bg-gradient-primary bg-clip-text text-transparent">
-          Marriage Compatibility
+          {t('compatibility.title')}
         </h2>
         <p className="text-muted-foreground max-w-2xl mx-auto">
-          Discover the cosmic harmony between you and your partner. The stars reveal the deepest secrets of love and compatibility.
+          {t('compatibility.description')}
         </p>
       </div>
 
@@ -239,19 +241,19 @@ export const MarriageCompatibility = ({ userBirthDate, className = "" }: Marriag
             <div className="w-16 h-16 mx-auto rounded-full bg-gradient-primary flex items-center justify-center">
               <Heart className="w-8 h-8 text-white" />
             </div>
-            <h3 className="text-xl font-cinzel font-semibold">Your Sign</h3>
+            <h3 className="text-xl font-cinzel font-semibold">{t('compatibility.yourSign')}</h3>
             {userSign ? (
               <div className="space-y-2">
                 <Badge variant="outline" className="text-lg px-4 py-2 mystic-border">
                   {userSign}
                 </Badge>
                 <p className="text-sm text-muted-foreground">
-                  Based on your birth date
+                  {t('compatibility.basedOnBirthDate')}
                 </p>
               </div>
             ) : (
               <p className="text-muted-foreground">
-                Birth date not provided
+                {t('compatibility.noBirthDate')}
               </p>
             )}
           </div>
@@ -263,11 +265,11 @@ export const MarriageCompatibility = ({ userBirthDate, className = "" }: Marriag
             <div className="w-16 h-16 mx-auto rounded-full bg-gradient-secondary flex items-center justify-center">
               <Users className="w-8 h-8 text-white" />
             </div>
-            <h3 className="text-xl font-cinzel font-semibold">Partner's Sign</h3>
+            <h3 className="text-xl font-cinzel font-semibold">{t('compatibility.partnerSign')}</h3>
             <div className="space-y-2">
               <Select value={partnerSign} onValueChange={setPartnerSign}>
                 <SelectTrigger className="max-w-[200px] mx-auto mystic-border">
-                  <SelectValue placeholder="Select sign" />
+                  <SelectValue placeholder={t('compatibility.selectSign')} />
                 </SelectTrigger>
                 <SelectContent>
                   {zodiacSigns.map((sign) => (
@@ -290,7 +292,7 @@ export const MarriageCompatibility = ({ userBirthDate, className = "" }: Marriag
             disabled={isRevealing}
             className="bg-gradient-primary hover:opacity-90 text-white px-8 py-3 text-lg font-semibold cosmic-glow"
           >
-            {isRevealing ? "Consulting the stars..." : "Reveal Cosmic Compatibility"}
+            {isRevealing ? t('compatibility.consulting') : t('compatibility.revealCompatibility')}
           </Button>
         </div>
       )}
@@ -330,19 +332,19 @@ export const MarriageCompatibility = ({ userBirthDate, className = "" }: Marriag
             <div className="grid md:grid-cols-3 gap-8">
               <div className="text-center space-y-3">
                 <Sparkles className="w-10 h-10 mx-auto text-primary" />
-                <h4 className="font-semibold text-xl font-cinzel">Chemistry</h4>
+                <h4 className="font-semibold text-xl font-cinzel">{t('compatibility.chemistry')}</h4>
                 <p className="text-muted-foreground">{compatibilityData.chemistry}</p>
               </div>
               
               <div className="text-center space-y-3">
                 <Zap className="w-10 h-10 mx-auto text-destructive" />
-                <h4 className="font-semibold text-xl font-cinzel">Challenges</h4>
+                <h4 className="font-semibold text-xl font-cinzel">{t('compatibility.challenges')}</h4>
                 <p className="text-muted-foreground">{compatibilityData.challenges}</p>
               </div>
               
               <div className="text-center space-y-3">
                 <Star className="w-10 h-10 mx-auto text-secondary" />
-                <h4 className="font-semibold text-xl font-cinzel">Strengths</h4>
+                <h4 className="font-semibold text-xl font-cinzel">{t('compatibility.strengths')}</h4>
                 <p className="text-muted-foreground">{compatibilityData.strengths}</p>
               </div>
             </div>
@@ -350,14 +352,14 @@ export const MarriageCompatibility = ({ userBirthDate, className = "" }: Marriag
             {/* Cosmic Advice */}
             <div className="luxury-card p-8 text-center mystic-border">
               <h4 className="text-2xl font-cinzel font-bold mb-4 ethereal-text">
-                COSMIC ADVICE
+                {t('compatibility.cosmicAdvice')}
               </h4>
               <p className="text-muted-foreground leading-relaxed text-lg">
                 {compatibilityData.score >= 80 ? 
-                  "The stars shine favorably upon your union. This relationship has the potential for deep happiness and mutual growth. Nurture the unique gifts you bring to each other." :
+                  t('compatibility.advice.high') :
                   compatibilityData.score >= 60 ?
-                  "Your connection has solid foundations with room for growth. Focus on understanding and appreciating your differences as they can be your greatest strengths." :
-                  "Every relationship requires work and understanding. Use your challenges as opportunities to grow together and create a unique bond that transcends the stars."
+                  t('compatibility.advice.medium') :
+                  t('compatibility.advice.low')
                 }
               </p>
             </div>

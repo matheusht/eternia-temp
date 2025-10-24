@@ -22,6 +22,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface LoveSketch {
   id: string;
@@ -37,6 +38,7 @@ interface LoveSketch {
 }
 
 export function LoveSketchGallery() {
+  const { t } = useTranslation();
   const [sketches, setSketches] = useState<LoveSketch[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedSketch, setSelectedSketch] = useState<LoveSketch | null>(null);
@@ -56,7 +58,7 @@ export function LoveSketchGallery() {
       setSketches(data || []);
     } catch (error) {
       console.error('Error fetching sketches:', error);
-      toast.error("Error loading gallery");
+      toast.error(t('loveSketch.errorLoading') || "Error loading gallery");
     } finally {
       setLoading(false);
     }
@@ -79,9 +81,9 @@ export function LoveSketchGallery() {
         )
       );
       
-      toast.success(currentFavorite ? "Removed from favorites" : "Added to favorites");
+      toast.success(currentFavorite ? t('loveSketch.removedFromFavorites') : t('loveSketch.addedToFavorites'));
     } catch (error) {
-      toast.error("Error updating favorite");
+      toast.error(t('loveSketch.errorUpdating') || "Error updating favorite");
     }
   };
 
@@ -95,28 +97,20 @@ export function LoveSketchGallery() {
       if (error) throw error;
       
       setSketches(prev => prev.filter(sketch => sketch.id !== id));
-      toast.success("Sketch deleted successfully");
+      toast.success(t('loveSketch.sketchDeleted'));
     } catch (error) {
-      toast.error("Error deleting sketch");
+      toast.error(t('loveSketch.errorDeleting') || "Error deleting sketch");
     }
   };
 
   const getStyleLabel = (style: string) => {
-    const styles = {
-      romantic: "Romantic",
-      mystical: "Mystical",
-      renaissance: "Renaissance",
-      watercolor: "Watercolor",
-      fantasy: "Fantasy",
-      portrait: "Portrait"
-    };
-    return styles[style as keyof typeof styles] || style;
+    return t(`loveSketch.styles.${style}`) || style;
   };
 
   if (loading) {
     return (
       <div className="flex justify-center items-center py-12">
-        <div className="text-foreground text-lg">Loading gallery...</div>
+        <div className="text-foreground text-lg">{t('loveSketch.loadingGallery')}</div>
       </div>
     );
   }
@@ -126,9 +120,9 @@ export function LoveSketchGallery() {
       <Card className="bg-card/50 backdrop-blur-sm border-primary/20">
         <CardContent className="flex flex-col items-center justify-center py-12">
           <Heart className="h-16 w-16 text-primary/50 mb-4" />
-          <h3 className="text-xl font-cinzel text-foreground mb-2">Your gallery is empty</h3>
+          <h3 className="text-xl font-cinzel text-foreground mb-2">{t('loveSketch.emptyGallery')}</h3>
           <p className="text-foreground/70 text-center">
-            Create your first love sketch to start your collection of mystical connections.
+            {t('loveSketch.emptyGalleryDesc')}
           </p>
         </CardContent>
       </Card>
@@ -183,7 +177,7 @@ export function LoveSketchGallery() {
                   className="flex items-center gap-1"
                 >
                   <Eye className="h-3 w-3" />
-                  View
+                  {t('loveSketch.view')}
                 </Button>
                 
                 <AlertDialog>
@@ -194,15 +188,15 @@ export function LoveSketchGallery() {
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
-                      <AlertDialogTitle>Delete Sketch</AlertDialogTitle>
+                      <AlertDialogTitle>{t('loveSketch.deleteSketch')}</AlertDialogTitle>
                       <AlertDialogDescription>
-                        Are you sure you want to delete this sketch? This action cannot be undone.
+                        {t('loveSketch.deleteConfirm')}
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogCancel>{t('loveSketch.cancel')}</AlertDialogCancel>
                       <AlertDialogAction onClick={() => deleteSketch(sketch.id)}>
-                        Delete
+                        {t('loveSketch.delete')}
                       </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
@@ -216,7 +210,7 @@ export function LoveSketchGallery() {
       <Dialog open={!!selectedSketch} onOpenChange={() => setSelectedSketch(null)}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="font-cinzel text-2xl">Love Sketch</DialogTitle>
+            <DialogTitle className="font-cinzel text-2xl">{t('loveSketch.title')}</DialogTitle>
           </DialogHeader>
           
           {selectedSketch && (
@@ -231,29 +225,29 @@ export function LoveSketchGallery() {
               
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <h4 className="font-semibold text-foreground mb-2">Description</h4>
+                  <h4 className="font-semibold text-foreground mb-2">{t('loveSketch.description')}</h4>
                   <p className="text-foreground/80 text-sm">{selectedSketch.prompt_description}</p>
                 </div>
                 
                 <div>
-                  <h4 className="font-semibold text-foreground mb-2">Physical Characteristics</h4>
+                  <h4 className="font-semibold text-foreground mb-2">{t('loveSketch.physicalCharacteristics')}</h4>
                   <p className="text-foreground/80 text-sm">{selectedSketch.physical_traits}</p>
                 </div>
                 
                 <div>
-                  <h4 className="font-semibold text-foreground mb-2">Personality</h4>
+                  <h4 className="font-semibold text-foreground mb-2">{t('loveSketch.personality')}</h4>
                   <p className="text-foreground/80 text-sm">{selectedSketch.personality_traits}</p>
                 </div>
                 
                 <div>
-                  <h4 className="font-semibold text-foreground mb-2">Astrological Elements</h4>
+                  <h4 className="font-semibold text-foreground mb-2">{t('loveSketch.astrologicalElements')}</h4>
                   <p className="text-foreground/80 text-sm">{selectedSketch.astrological_elements}</p>
                 </div>
               </div>
               
               {selectedSketch.interpretation && (
                 <div className="bg-primary/10 rounded-lg p-4">
-                  <h4 className="font-cinzel text-lg text-foreground mb-2">Mystical Interpretation</h4>
+                  <h4 className="font-cinzel text-lg text-foreground mb-2">{t('loveSketch.mysticalInterpretation')}</h4>
                   <p className="text-foreground/80 leading-relaxed">{selectedSketch.interpretation}</p>
                 </div>
               )}

@@ -14,6 +14,7 @@ interface UserProfile {
   gender: string | null;
   marital_status: string | null;
   interests: string[] | null;
+  language_preference: string | null;
   total_points: number;
   current_level: string;
   created_at: string;

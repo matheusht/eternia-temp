@@ -1,3 +1,5 @@
+import { getUtilTranslation, type Language } from '@/i18n/translations';
+
 interface SpiritualPractice {
   type: string;
   title: string;
@@ -93,7 +95,7 @@ export const spiritualPractices: SpiritualPractice[] = [
   }
 ];
 
-export const getDailyPractice = (userLevel: string, goal: string, date: Date): SpiritualPractice => {
+export const getDailyPractice = (userLevel: string, goal: string, date: Date, language: Language = 'en'): SpiritualPractice => {
   // Default to "Apprentice" if level is undefined or not recognized
   const safeLevel = userLevel || "Apprentice";
   

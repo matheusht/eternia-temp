@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useUserData } from "@/hooks/useUserData";
 import { generateOracleResponse, generateGreeting } from "@/utils/localOracle";
 import { AppLayout } from "@/components/AppLayout";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface Message {
   id: string;
@@ -20,6 +21,7 @@ const AIOracle = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { profile, addActivity } = useUserData();
+  const { t } = useTranslation();
   
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState("");
@@ -104,7 +106,7 @@ const AIOracle = () => {
       // Fallback response
       const fallbackResponse: Message = {
         id: (Date.now() + 1).toString(),
-        text: "The energies are a bit unstable at the moment. Let me reconnect... Please try again in a moment.",
+        text: t('oracle.errorUnstableEnergies'),
         isUser: false,
         timestamp: new Date()
       };
@@ -125,16 +127,16 @@ const AIOracle = () => {
   if (!user || !profile) {
     return (
       <div className="min-h-screen bg-gradient-mystic flex items-center justify-center">
-        <div className="text-white text-xl">Loading...</div>
+        <div className="text-white text-xl">{t('oracle.loading')}</div>
       </div>
     );
   }
 
   const suggestions = [
-    "How is my energy today?",
-    "What do the stars say about my love life?",
-    "What ritual should I do this week?",
-    "How can I improve my spirituality?"
+    t('oracle.suggestions.energy'),
+    t('oracle.suggestions.love'),
+    t('oracle.suggestions.ritual'),
+    t('oracle.suggestions.spirituality')
   ];
 
   return (
@@ -142,14 +144,14 @@ const AIOracle = () => {
       <div className="min-h-screen cosmic-bg p-4 pb-20">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center justify-center mb-6">
-            <h1 className="text-3xl font-playfair ethereal-text">Personalized Consultation</h1>
+            <h1 className="text-3xl font-playfair ethereal-text">{t('oracle.title')}</h1>
           </div>
 
           <Card className="mystic-border">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Sparkles className="w-5 h-5 text-primary" />
-                Mystic Oracle
+                {t('oracle.subtitle')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -183,7 +185,7 @@ const AIOracle = () => {
                         <div className="w-2 h-2 bg-primary rounded-full animate-pulse delay-100"></div>
                         <div className="w-2 h-2 bg-primary rounded-full animate-pulse delay-200"></div>
                         <span className="text-sm text-muted-foreground ml-2">
-                          The oracle is consulting the stars...
+                          {t('oracle.consulting')}
                         </span>
                       </div>
                     </div>
@@ -197,7 +199,7 @@ const AIOracle = () => {
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder="Ask your question to the oracle..."
+                  placeholder={t('oracle.inputPlaceholder')}
                   disabled={isLoading}
                   className="flex-1"
                 />
@@ -213,7 +215,7 @@ const AIOracle = () => {
 
               {/* Quick Questions */}
               <div className="space-y-2">
-                <p className="text-sm text-muted-foreground">Suggested questions:</p>
+                <p className="text-sm text-muted-foreground">{t('oracle.suggestedQuestions')}</p>
                 <div className="flex flex-wrap gap-2">
                   {suggestions.map((suggestion, index) => (
                     <Button

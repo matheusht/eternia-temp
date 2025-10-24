@@ -28,15 +28,9 @@ import { useDailyLimits } from "@/hooks/useDailyLimits";
 import { useAuth } from "@/hooks/useAuth";
 import { getZodiacSign } from "@/utils/horoscope";
 import { Loader2, Sparkles, Clock, Heart } from "lucide-react";
+import { useTranslation } from "@/hooks/useTranslation";
 
-const formSchema = z.object({
-  promptDescription: z
-    .string()
-    .min(10, "Describe with more details (minimum 10 characters)"),
-  physicalTraits: z.string().min(5, "Describe some physical characteristics"),
-  personalityTraits: z.string().min(5, "Describe the personality"),
-  artisticStyle: z.string().min(1, "Select an artistic style"),
-});
+// We'll create the schema inside the component to access translations
 
 interface LoveSketchFormProps {
   userProfile: any;
@@ -47,6 +41,7 @@ export function LoveSketchForm({
   userProfile,
   onSketchGenerated,
 }: LoveSketchFormProps) {
+  const { t } = useTranslation();
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedSketch, setGeneratedSketch] = useState<{
     imageUrl: string;
@@ -64,6 +59,15 @@ export function LoveSketchForm({
     getResetTime,
   } = useDailyLimits("love_sketches", 2);
 
+  const formSchema = z.object({
+    promptDescription: z
+      .string()
+      .min(10, t('loveSketch.validation.descriptionMin')),
+    physicalTraits: z.string().min(5, t('loveSketch.validation.physicalMin')),
+    personalityTraits: z.string().min(5, t('loveSketch.validation.personalityMin')),
+    artisticStyle: z.string().min(1, t('loveSketch.validation.styleRequired')),
+  });
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -75,17 +79,17 @@ export function LoveSketchForm({
   });
 
   const artisticStyles = [
-    { value: "romantic", label: "Romantic & Soft" },
-    { value: "mystical", label: "Mystical & Ethereal" },
-    { value: "renaissance", label: "Classical Renaissance" },
-    { value: "watercolor", label: "Delicate Watercolor" },
-    { value: "fantasy", label: "Magical Fantasy" },
-    { value: "portrait", label: "Realistic Portrait" },
+    { value: "romantic", label: t('loveSketch.styles.romantic') },
+    { value: "mystical", label: t('loveSketch.styles.mystical') },
+    { value: "renaissance", label: t('loveSketch.styles.renaissance') },
+    { value: "watercolor", label: t('loveSketch.styles.watercolor') },
+    { value: "fantasy", label: t('loveSketch.styles.fantasy') },
+    { value: "portrait", label: t('loveSketch.styles.portrait') },
   ];
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (limitReached) {
-      toast.error("Daily limit reached! Try again tomorrow.");
+      toast.error(t('loveSketch.errors.dailyLimit'));
       return;
     }
 
@@ -155,12 +159,12 @@ export function LoveSketchForm({
       // Refresh limit counter
       refreshLimit();
 
-      toast.success("Love sketch created successfully!");
+      toast.success(t('loveSketch.sketchCreated'));
       onSketchGenerated();
     } catch (error: any) {
       console.error("Error generating love sketch:", error);
 
-      let errorMessage = "Please try again later";
+      let errorMessage = t('loveSketch.errors.tryAgain');
 
       // Try to extract error message from response
       if (error.context?.body) {
@@ -182,16 +186,14 @@ export function LoveSketchForm({
 
       // Handle specific status codes
       if (error.context?.status === 429) {
-        errorMessage =
-          "Daily limit reached. You can create up to 2 love sketches per day. Try again tomorrow!";
+        errorMessage = t('loveSketch.errors.dailyLimit');
       } else if (error.context?.status === 401) {
-        errorMessage = "Session expired. Please log in again.";
+        errorMessage = t('loveSketch.errors.sessionExpired');
       } else if (
         error.context?.status === 500 &&
         errorMessage.includes("credits")
       ) {
-        errorMessage =
-          "System temporarily unavailable. Please contact support.";
+        errorMessage = t('loveSketch.errors.systemUnavailable');
       }
 
       toast.error(errorMessage);
@@ -211,7 +213,7 @@ export function LoveSketchForm({
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-cinzel text-foreground flex items-center justify-center gap-2">
             <Sparkles className="h-6 w-6 text-primary" />
-            Your Love Sketch
+            {t('loveSketch.yourSketch')}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -225,7 +227,7 @@ export function LoveSketchForm({
 
           <div className="bg-primary/10 rounded-lg p-4">
             <h3 className="font-cinzel text-lg text-foreground mb-2">
-              Mystical Interpretation
+              {t('loveSketch.mysticalInterpretation')}
             </h3>
             <p className="text-foreground/80 leading-relaxed">
               {generatedSketch.interpretation}
@@ -234,16 +236,16 @@ export function LoveSketchForm({
 
           <div className="flex justify-center space-x-4">
             <Button
-              onClick={() => toast.success("Sketch saved to your gallery!")}
+              onClick={() => toast.success(t('loveSketch.sketchSaved'))}
               className="bg-accent hover:bg-accent/90"
             >
-              Save to Gallery
+              {t('loveSketch.saveToGallery')}
             </Button>
             <Button
               onClick={handleNewSketch}
               className="bg-primary hover:bg-primary/90"
             >
-              Create New Sketch
+              {t('loveSketch.createNew')}
             </Button>
           </div>
         </CardContent>
@@ -255,7 +257,7 @@ export function LoveSketchForm({
     <Card className="bg-card/50 backdrop-blur-sm border-primary/20">
       <CardHeader>
         <CardTitle className="text-2xl font-cinzel text-foreground text-center">
-          Describe Your Special Connection
+          {t('loveSketch.describeConnection')}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -265,23 +267,22 @@ export function LoveSketchForm({
             <div className="flex items-center justify-center p-3 bg-muted/50 rounded-lg">
               <Loader2 className="h-4 w-4 animate-spin mr-2" />
               <span className="text-sm text-muted-foreground">
-                Checking daily limit...
+                {t('loveSketch.checkingLimit')}
               </span>
             </div>
           ) : limitReached ? (
             <Alert className="border-destructive/50 bg-destructive/10">
               <Clock className="h-4 w-4" />
               <AlertDescription className="text-foreground">
-                <strong>Daily limit reached!</strong> You've created{" "}
-                {dailyCount}/{maxLimit} love sketches today.
+                <strong>{t('loveSketch.limitReached')}</strong> {t('loveSketch.limitReachedDesc', { count: dailyCount, max: maxLimit })}
                 <br />
                 <span className="text-sm text-muted-foreground">
-                  Reset at midnight (
-                  {getResetTime().toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
+                  {t('loveSketch.resetAt', { 
+                    time: getResetTime().toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })
                   })}
-                  )
                 </span>
               </AlertDescription>
             </Alert>
@@ -290,12 +291,11 @@ export function LoveSketchForm({
               <div className="flex items-center gap-2">
                 <Heart className="h-4 w-4 text-primary" />
                 <span className="text-sm font-medium text-foreground">
-                  Daily sketches: {dailyCount}/{maxLimit}
+                  {t('loveSketch.dailySketches')}: {dailyCount}/{maxLimit}
                 </span>
               </div>
               <span className="text-xs text-muted-foreground">
-                {remainingAttempts}{" "}
-                {remainingAttempts === 1 ? "remaining" : "remaining"}
+                {remainingAttempts} {t('loveSketch.remaining')}
               </span>
             </div>
           )}
@@ -309,11 +309,11 @@ export function LoveSketchForm({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-foreground">
-                    General Description
+                    {t('loveSketch.generalDescription')}
                   </FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Describe the special person you would like to visualize... Talk about the connection you feel, special moments, or simply how you imagine them..."
+                      placeholder={t('loveSketch.descriptionPlaceholder')}
                       className="min-h-[100px] bg-background/50"
                       {...field}
                     />
@@ -330,11 +330,11 @@ export function LoveSketchForm({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-foreground">
-                      Physical Characteristics
+                      {t('loveSketch.physicalCharacteristics2')}
                     </FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder="Eye color, hair, height, distinctive features..."
+                        placeholder={t('loveSketch.physicalPlaceholder')}
                         className="min-h-[80px] bg-background/50"
                         {...field}
                       />
@@ -350,11 +350,11 @@ export function LoveSketchForm({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-foreground">
-                      Personality and Energy
+                      {t('loveSketch.personalityAndEnergy')}
                     </FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder="Caring, adventurous, intellectual, spiritual..."
+                        placeholder={t('loveSketch.personalityPlaceholder')}
                         className="min-h-[80px] bg-background/50"
                         {...field}
                       />
@@ -371,7 +371,7 @@ export function LoveSketchForm({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-foreground">
-                    Artistic Style
+                    {t('loveSketch.artisticStyle')}
                   </FormLabel>
                   <Select
                     onValueChange={field.onChange}
@@ -379,7 +379,7 @@ export function LoveSketchForm({
                   >
                     <FormControl>
                       <SelectTrigger className="bg-background/50">
-                        <SelectValue placeholder="Choose the sketch style" />
+                        <SelectValue placeholder={t('loveSketch.chooseStyle')} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -403,12 +403,12 @@ export function LoveSketchForm({
               {isGenerating ? (
                 <>
                   <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                  Creating Mystical Sketch...
+                  {t('loveSketch.generating')}
                 </>
               ) : (
                 <>
                   <Sparkles className="h-5 w-5 mr-2" />
-                  Generate Love Sketch
+                  {t('loveSketch.generateButton')}
                 </>
               )}
             </Button>

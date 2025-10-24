@@ -3,6 +3,7 @@ import { Crown, Home, Sun, Heart, Brain, Map, Sparkles, BookOpen, BarChart, Menu
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { NavLink, useLocation } from "react-router-dom";
+import { useTranslation } from "@/hooks/useTranslation";
 
 import {
   Sidebar,
@@ -22,36 +23,49 @@ export function EterniaSidebar() {
   const { open } = useSidebar();
   const location = useLocation();
   const currentPath = location.pathname;
+  const { t, language } = useTranslation();
+  
+  // Helper function to create language-aware URLs
+  const createUrl = (path: string) => {
+    if (language === 'pt') {
+      return path === '/' ? '/pt' : `/pt${path}`;
+    }
+    return path;
+  };
 
   const navigationGroups = [
     {
-      label: "Main",
+      label: t('sidebar.main'),
       items: [
-        { title: "Dashboard", url: "/", icon: Home },
-        { title: "Horoscope", url: "/horoscope", icon: Sun },
+        { title: t('sidebar.dashboard'), url: createUrl("/"), icon: Home },
+        { title: t('sidebar.horoscope'), url: createUrl("/horoscope"), icon: Sun },
       ]
     },
     {
-      label: "Discover",
+      label: t('sidebar.discover'),
       items: [
-        { title: "Compatibility", url: "/compatibility", icon: Heart },
-        { title: "Love Sketch", url: "/love-sketch", icon: Palette },
-        { title: "Oracle", url: "/ai-oracle", icon: Brain },
-        { title: "Tarot", url: "/tarot", icon: Sparkles },
+        { title: t('sidebar.compatibility'), url: createUrl("/compatibility"), icon: Heart },
+        { title: t('sidebar.loveSketch'), url: createUrl("/love-sketch"), icon: Palette },
+        { title: t('sidebar.oracle'), url: createUrl("/ai-oracle"), icon: Brain },
+        { title: t('sidebar.tarot'), url: createUrl("/tarot"), icon: Sparkles },
       ]
     },
     {
-      label: "Advanced", 
+      label: t('sidebar.advanced'), 
       items: [
-        { title: "Astral Map", url: "/astral-map", icon: Map },
-        { title: "Diary", url: "/diary", icon: BookOpen },
-        { title: "Weekly Report", url: "/weekly-report", icon: BarChart },
+        { title: t('sidebar.astralMap'), url: createUrl("/astral-map"), icon: Map },
+        { title: t('sidebar.diary'), url: createUrl("/diary"), icon: BookOpen },
+        { title: t('sidebar.weeklyReport'), url: createUrl("/weekly-report"), icon: BarChart },
       ]
     }
   ];
 
   const isActive = (path: string) => {
+    // Handle root path for both languages
     if (path === "/" && currentPath === "/") return true;
+    if (path === "/pt" && currentPath === "/pt") return true;
+    
+    // Handle other paths
     return currentPath === path;
   };
 

@@ -1,3 +1,5 @@
+import { getUtilTranslation, type Language } from '@/i18n/translations';
+
 export interface TarotCard {
   id: number;
   name: string;
@@ -330,7 +332,7 @@ export const getRandomCards = (count: number): TarotCard[] => {
   }));
 };
 
-export const getCardInterpretation = (card: TarotCard, position: string, userProfile: any): string => {
+export const getCardInterpretation = (card: TarotCard, position: string, userProfile: any, language: Language = 'en'): string => {
   const meaning = card.isReversed ? card.reversedMeaning : card.meaning;
   const personalizedContext = getPersonalizedContext(userProfile);
   

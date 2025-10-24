@@ -1,27 +1,30 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Sparkles, Star, Moon, Sun } from "lucide-react";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export const HoroscopeImportance = () => {
+  const { t } = useTranslation();
+  
   const benefits = [
     {
       icon: Sun,
-      title: "Deep Self-Knowledge",
-      description: "Discover your unique characteristics, potentials and challenges through personalized astrological analysis."
+      title: t('onboarding.importancePoints.personality'),
+      description: t('onboarding.importancePoints.personality')
     },
     {
       icon: Moon,
-      title: "Daily Guidance",
-      description: "Receive personalized insights about the best time to make important decisions."
+      title: t('onboarding.importancePoints.timing'),
+      description: t('onboarding.importancePoints.timing')
     },
     {
       icon: Star,
-      title: "Relationships",
-      description: "Better understand your compatibility and how to relate in a more harmonious way."
+      title: t('onboarding.importancePoints.relationships'),
+      description: t('onboarding.importancePoints.relationships')
     },
     {
       icon: Sparkles,
-      title: "Future Planning",
-      description: "Use astrological energies in your favor to plan projects and life goals."
+      title: t('onboarding.importancePoints.purpose'),
+      description: t('onboarding.importancePoints.purpose')
     }
   ];
 
@@ -32,11 +35,10 @@ export const HoroscopeImportance = () => {
           <Sparkles className="w-full h-full text-primary-foreground" />
         </div>
         <h2 className="text-2xl font-playfair ethereal-text">
-          Why is Horoscope Important?
+          {t('onboarding.importanceTitle')}
         </h2>
         <p className="text-muted-foreground max-w-md mx-auto">
-          For millennia, humanity has sought to understand the influence of the stars on our lives. 
-          Discover how astrology can guide your personal journey.
+          {t('onboarding.importanceDescription')}
         </p>
       </div>
 
@@ -67,8 +69,7 @@ export const HoroscopeImportance = () => {
 
       <div className="bg-gradient-to-r from-primary/10 to-secondary/10 rounded-lg p-4 border mystic-border">
         <p className="text-sm text-center text-muted-foreground">
-          <span className="text-primary font-medium">Tip:</span> The more accurate your birth information, 
-          the more precise your personalized astrological insights will be.
+          <span className="text-primary font-medium">{t('common.tip')}:</span> {t('onboarding.accuracyTip')}
         </p>
       </div>
     </div>

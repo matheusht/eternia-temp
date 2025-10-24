@@ -13,6 +13,7 @@ import { TarotSpread } from '@/components/tarot/TarotSpread';
 import { TarotHistory } from '@/components/tarot/TarotHistory';
 import { TarotCard as TarotCardType } from '@/utils/tarotCards';
 import { Sparkles, Moon, Sun, Star } from 'lucide-react';
+import { useTranslation } from '@/hooks/useTranslation';
 
 const Tarot = () => {
   const navigate = useNavigate();
@@ -23,6 +24,7 @@ const Tarot = () => {
   const [selectedCards, setSelectedCards] = useState<TarotCardType[]>([]);
   const [isReading, setIsReading] = useState(false);
   const [interpretation, setInterpretation] = useState<string>('');
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!user) {
@@ -56,29 +58,29 @@ const Tarot = () => {
   const spreadTypes = [
     {
       id: 'three-card',
-      name: 'Three Cards',
-      description: 'Past, Present and Future',
+      name: t('tarot.spreads.threeCard'),
+      description: t('tarot.spreads.threeCardDesc'),
       icon: Star,
       cards: 3
     },
     {
       id: 'celtic-cross',
-      name: 'Celtic Cross',
-      description: 'Complete and deep reading',
+      name: t('tarot.spreads.celticCross'),
+      description: t('tarot.spreads.celticCrossDesc'),
       icon: Sparkles,
       cards: 10
     },
     {
       id: 'love',
-      name: 'Love',
-      description: 'Relationships and feelings',
+      name: t('tarot.spreads.love'),
+      description: t('tarot.spreads.loveDesc'),
       icon: Moon,
       cards: 5
     },
     {
       id: 'career',
-      name: 'Career',
-      description: 'Work and prosperity',
+      name: t('tarot.spreads.career'),
+      description: t('tarot.spreads.careerDesc'),
       icon: Sun,
       cards: 4
     }
@@ -90,10 +92,10 @@ const Tarot = () => {
         <div className="container mx-auto px-4 py-8">
           <div className="text-center mb-8">
             <h1 className="text-4xl font-playfair text-foreground mb-4 animate-fade-in">
-              Mystic Tarot
+              {t('tarot.title')}
             </h1>
             <p className="text-muted-foreground animate-fade-in">
-              Unveil the mysteries of your destiny through sacred cards
+              {t('tarot.subtitle')}
             </p>
           </div>
 
@@ -101,14 +103,14 @@ const Tarot = () => {
           <div className="block sm:hidden mb-6">
             <Select value={currentSpread} onValueChange={(value) => setCurrentSpread(value as any)}>
               <SelectTrigger className="w-full">
-                <SelectValue placeholder="Choose reading type" />
+                <SelectValue placeholder={t('tarot.chooseReadingType')} />
               </SelectTrigger>
               <SelectContent>
                 {spreadTypes.map((spread) => (
                   <SelectItem key={`mobile-${spread.id}`} value={spread.id}>
                     <div className="flex items-center gap-2">
                       <spread.icon className="w-4 h-4" />
-                      <span>{spread.name} ({spread.cards} cards)</span>
+                      <span>{spread.name} ({spread.cards} {t('tarot.cards')})</span>
                     </div>
                   </SelectItem>
                 ))}
@@ -131,7 +133,7 @@ const Tarot = () => {
                 <div className="flex flex-col items-center gap-2">
                   <spread.icon className="w-6 h-6" />
                   <span className="font-medium">{spread.name}</span>
-                  <span className="text-xs text-muted-foreground">{spread.cards} cards</span>
+                  <span className="text-xs text-muted-foreground">{spread.cards} {t('tarot.cards')}</span>
                 </div>
               </button>
             ))}
@@ -153,7 +155,7 @@ const Tarot = () => {
                     {selectedSpread.description}
                   </p>
                    <Badge variant="outline" className="mx-auto">
-                    {selectedSpread.cards} cards
+                    {selectedSpread.cards} {t('tarot.cards')}
                   </Badge>
                 </CardHeader>
               </Card>
@@ -166,7 +168,7 @@ const Tarot = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Sparkles className="w-5 h-5 text-primary" />
-                    Choose Your Cards
+                    {t('tarot.chooseYourCards')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -184,7 +186,7 @@ const Tarot = () => {
                         className="w-full"
                         variant="cosmic"
                       >
-                        Start Reading
+                        {t('tarot.startReading')}
                       </Button>
                     </div>
                   )}
@@ -198,7 +200,7 @@ const Tarot = () => {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Moon className="w-5 h-5 text-primary" />
-                      Your Reading
+                      {t('tarot.yourReading')}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -222,7 +224,7 @@ const Tarot = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Star className="w-5 h-5 text-primary" />
-                    Reading History
+                    {t('tarot.readingHistory')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -244,7 +246,7 @@ const Tarot = () => {
                 size="sm"
                 className="bg-background/80 backdrop-blur-sm"
               >
-                New Reading
+                {t('tarot.newReading')}
               </Button>
             </div>
           )}

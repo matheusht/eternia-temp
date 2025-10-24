@@ -1,4 +1,6 @@
 // Local Spiritual Oracle - No API costs
+import { getUtilTranslation, type Language } from '@/i18n/translations';
+
 interface OracleInput {
   message: string;
   userData: {
@@ -135,7 +137,7 @@ function addPersonalizedInsight(response: string, userData: OracleInput['userDat
   return response + (insights.length > 0 ? ` ${insights.join(' ')}` : '');
 }
 
-export function generateOracleResponse(input: OracleInput): string {
+export function generateOracleResponse(input: OracleInput, language: Language = 'en'): string {
   const { message, userData } = input;
   const category = categorizeMessage(message);
   const name = userData.displayName || 'dear soul';
@@ -165,7 +167,7 @@ export function generateOracleResponse(input: OracleInput): string {
 }
 
 // Personalized greeting responses
-export function generateGreeting(userData: OracleInput['userData']): string {
+export function generateGreeting(userData: OracleInput['userData'], language: Language = 'en'): string {
   const name = userData.displayName || 'illuminated soul';
   
   // Convert goal from Portuguese to English

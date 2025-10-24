@@ -1,3 +1,5 @@
+import { getUtilTranslation, type Language } from '@/i18n/translations';
+
 interface HoroscopeData {
   sign: string;
   personalizedMessage: string;
@@ -10,7 +12,8 @@ export const getPersonalizedHoroscope = (
   birthDate: string,
   birthTime: string,
   birthLocation: string,
-  goal: string
+  goal: string,
+  language: Language = 'en'
 ): HoroscopeData => {
   // Parse date manually to avoid timezone issues
   const parts = birthDate.split('-');
@@ -24,9 +27,9 @@ export const getPersonalizedHoroscope = (
   const personalizedMessage = generatePersonalizedMessage(sign, goal);
   
   // Get daily elements based on sign and current cosmic energy
-  const luckyElement = getLuckyElement(sign);
-  const energyColor = getEnergyColor(sign, goal);
-  const spiritualFocus = getSpiritualFocus(sign, goal);
+  const luckyElement = getLuckyElement(sign, language);
+  const energyColor = getEnergyColor(sign, goal, language);
+  const spiritualFocus = getSpiritualFocus(sign, goal, language);
   
   return {
     sign,
@@ -347,117 +350,119 @@ const generatePersonalizedMessage = (sign: string, goal: string): string => {
   return goalMessages[randomIndex];
 };
 
-const getLuckyElement = (sign: string): string => {
+const getLuckyElement = (sign: string, language: Language): string => {
   const elements: Record<string, string> = {
-    "Aries": "Sacred Fire",
-    "Leo": "Solar Fire", 
-    "Sagittarius": "Expansive Fire",
-    "Taurus": "Sacred Earth",
-    "Virgo": "Pure Earth",
-    "Capricorn": "Ancestral Earth",
-    "Gemini": "Divine Air",
-    "Libra": "Harmonious Air",
-    "Aquarius": "Futuristic Air",
-    "Cancer": "Celestial Water",
-    "Scorpio": "Transformative Water",
-    "Pisces": "Mystical Water"
+    "Aries": "sacredFire",
+    "Leo": "solarFire", 
+    "Sagittarius": "expansiveFire",
+    "Taurus": "sacredEarth",
+    "Virgo": "pureEarth",
+    "Capricorn": "ancestralEarth",
+    "Gemini": "divineAir",
+    "Libra": "harmoniousAir",
+    "Aquarius": "futuristicAir",
+    "Cancer": "celestialWater",
+    "Scorpio": "transformativeWater",
+    "Pisces": "mysticalWater"
   };
   
-  return elements[sign] || "Sacred Fire";
+  const elementKey = elements[sign] || "sacredFire";
+  return getUtilTranslation(language, 'horoscope.elements', elementKey);
 };
 
-const getEnergyColor = (sign: string, goal: string): string => {
+const getEnergyColor = (sign: string, goal: string, language: Language): string => {
   const baseColors: Record<string, string> = {
-    "Aries": "Celestial Red",
-    "Taurus": "Emerald Green", 
-    "Gemini": "Golden Yellow",
-    "Cancer": "Lunar Silver",
-    "Leo": "Imperial Gold",
-    "Virgo": "Sapphire Blue",
-    "Libra": "Rose Quartz",
-    "Scorpio": "Mystic Purple",
-    "Sagittarius": "Celestial Turquoise",
-    "Capricorn": "Cosmic Black",
-    "Aquarius": "Electric Blue",
-    "Pisces": "Ethereal Violet"
+    "Aries": "celestialRed",
+    "Taurus": "emeraldGreen", 
+    "Gemini": "goldenYellow",
+    "Cancer": "lunarSilver",
+    "Leo": "imperialGold",
+    "Virgo": "sapphireBlue",
+    "Libra": "roseQuartz",
+    "Scorpio": "mysticPurple",
+    "Sagittarius": "celestialTurquoise",
+    "Capricorn": "cosmicBlack",
+    "Aquarius": "electricBlue",
+    "Pisces": "etherealViolet"
   };
   
-  return baseColors[sign] || "Celestial Red";
+  const colorKey = baseColors[sign] || "celestialRed";
+  return getUtilTranslation(language, 'horoscope.colors', colorKey);
 };
 
-const getSpiritualFocus = (sign: string, goal: string): string => {
+const getSpiritualFocus = (sign: string, goal: string, language: Language): string => {
   const focuses: Record<string, Record<string, string>> = {
     "Aries": {
-      "self-knowledge": "Courage and self-discovery",
-      "love": "Passionate authenticity",  
-      "prosperity": "Leadership and initiative",
-      "spirituality": "Action meditation"
+      "self-knowledge": "ariesSelfKnowledge",
+      "love": "ariesLove",  
+      "prosperity": "ariesProsperity",
+      "spirituality": "ariesSpirituality"
     },
     "Taurus": {
-      "self-knowledge": "Inner stability and values",
-      "love": "Lasting commitment", 
-      "prosperity": "Patient building",
-      "spirituality": "Earth connection"
+      "self-knowledge": "taurusSelfKnowledge",
+      "love": "taurusLove", 
+      "prosperity": "taurusProsperity",
+      "spirituality": "taurusSpirituality"
     },
     "Gemini": {
-      "self-knowledge": "Mental versatility",
-      "love": "Communication and understanding",
-      "prosperity": "Diverse opportunities", 
-      "spirituality": "Learning and teaching"
+      "self-knowledge": "geminiSelfKnowledge",
+      "love": "geminiLove",
+      "prosperity": "geminiProsperity", 
+      "spirituality": "geminiSpirituality"
     },
     "Cancer": {
-      "self-knowledge": "Emotional wisdom",
-      "love": "Nurturing and protection",
-      "prosperity": "Family security",
-      "spirituality": "Ancestral connection"
+      "self-knowledge": "cancerSelfKnowledge",
+      "love": "cancerLove",
+      "prosperity": "cancerProsperity",
+      "spirituality": "cancerSpirituality"
     },
     "Leo": {
-      "self-knowledge": "Creative self-expression", 
-      "love": "Generous love",
-      "prosperity": "Leadership recognition",
-      "spirituality": "Solar radiance"
+      "self-knowledge": "leoSelfKnowledge", 
+      "love": "leoLove",
+      "prosperity": "leoProsperity",
+      "spirituality": "leoSpirituality"
     },
     "Virgo": {
-      "self-knowledge": "Analytical perfection",
-      "love": "Service and care",
-      "prosperity": "Methodical planning",
-      "spirituality": "Purification rituals"
+      "self-knowledge": "virgoSelfKnowledge",
+      "love": "virgoLove",
+      "prosperity": "virgoProsperity",
+      "spirituality": "virgoSpirituality"
     },
     "Libra": {
-      "self-knowledge": "Balance and harmony",
-      "love": "Partnership equality", 
-      "prosperity": "Collaborative success",
-      "spirituality": "Justice and beauty"
+      "self-knowledge": "libraSelfKnowledge",
+      "love": "libraLove", 
+      "prosperity": "libraProsperity",
+      "spirituality": "libraSpirituality"
     },
     "Scorpio": {
-      "self-knowledge": "Deep transformation",
-      "love": "Intense connection",
-      "prosperity": "Hidden resources",
-      "spirituality": "Shadow work"
+      "self-knowledge": "scorpioSelfKnowledge",
+      "love": "scorpioLove",
+      "prosperity": "scorpioProsperity",
+      "spirituality": "scorpioSpirituality"
     },
     "Sagittarius": {
-      "self-knowledge": "Philosophical expansion",
-      "love": "Freedom in unity",
-      "prosperity": "International opportunities", 
-      "spirituality": "Universal wisdom"
+      "self-knowledge": "sagittariusSelfKnowledge",
+      "love": "sagittariusLove",
+      "prosperity": "sagittariusProsperity", 
+      "spirituality": "sagittariusSpirituality"
     },
     "Capricorn": {
-      "self-knowledge": "Disciplined mastery",
-      "love": "Committed partnership",
-      "prosperity": "Long-term building",
-      "spirituality": "Traditional practices"
+      "self-knowledge": "capricornSelfKnowledge",
+      "love": "capricornLove",
+      "prosperity": "capricornProsperity",
+      "spirituality": "capricornSpirituality"
     },
     "Aquarius": {
-      "self-knowledge": "Innovative individuality",
-      "love": "Friendship and freedom",
-      "prosperity": "Futuristic ventures",
-      "spirituality": "Collective consciousness"
+      "self-knowledge": "aquariusSelfKnowledge",
+      "love": "aquariusLove",
+      "prosperity": "aquariusProsperity",
+      "spirituality": "aquariusSpirituality"
     },
     "Pisces": {
-      "self-knowledge": "Intuitive understanding",
-      "love": "Unconditional compassion",
-      "prosperity": "Flow and trust",
-      "spirituality": "Mystical union"
+      "self-knowledge": "piscesSelfKnowledge",
+      "love": "piscesLove",
+      "prosperity": "piscesProsperity",
+      "spirituality": "piscesSpirituality"
     }
   };
   
@@ -470,7 +475,8 @@ const getSpiritualFocus = (sign: string, goal: string): string => {
   };
   
   const englishGoal = goalMap[goal] || "self-knowledge";
-  return focuses[sign]?.[englishGoal] || "Spiritual growth";
+  const focusKey = focuses[sign]?.[englishGoal] || "ariesSelfKnowledge";
+  return getUtilTranslation(language, 'horoscope.spiritualFocus', focusKey);
 };
 
 // Generate today's numbers based on zodiac and date

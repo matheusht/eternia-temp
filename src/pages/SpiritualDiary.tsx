@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { analyzeEntry } from "@/utils/spiritualAnalysis";
 import { AppLayout } from "@/components/AppLayout";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface DiaryEntry {
   id: string;
@@ -26,6 +27,7 @@ const SpiritualDiary = () => {
   const { user } = useAuth();
   const { profile, addActivity } = useUserData();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [entries, setEntries] = useState<DiaryEntry[]>([]);
   const [isAddingEntry, setIsAddingEntry] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -163,7 +165,7 @@ const SpiritualDiary = () => {
     return (
       <div className="min-h-screen cosmic-bg p-4">
         <div className="max-w-4xl mx-auto flex items-center justify-center min-h-[50vh]">
-          <div className="text-primary font-medium">Loading your diary...</div>
+          <div className="text-primary font-medium">{t('spiritualDiary.loadingDiary')}</div>
         </div>
       </div>
     );
@@ -177,7 +179,7 @@ const SpiritualDiary = () => {
           <div className="flex items-center justify-center flex-1">
             <div className="flex items-center gap-3">
               <BookOpen className="w-8 h-8 text-primary" />
-              <h1 className="text-3xl font-playfair ethereal-text">Spiritual Diary</h1>
+              <h1 className="text-3xl font-playfair ethereal-text">{t('spiritualDiary.title')}</h1>
             </div>
           </div>
           
@@ -187,7 +189,7 @@ const SpiritualDiary = () => {
             className="flex items-center gap-2"
           >
             <Plus className="w-4 h-4" />
-            New Entry
+            {t('spiritualDiary.newEntry')}
           </Button>
         </div>
 
@@ -195,11 +197,11 @@ const SpiritualDiary = () => {
         {isAddingEntry && (
           <Card className="mystic-border cosmic-glow mb-6">
             <CardHeader>
-              <CardTitle>New Spiritual Entry</CardTitle>
+              <CardTitle>{t('spiritualDiary.newSpiritualEntry')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <label className="text-sm font-medium mb-2 block">Entry Type</label>
+                <label className="text-sm font-medium mb-2 block">{t('spiritualDiary.entryTypeLabel')}</label>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                   {Object.entries(entryTypes).map(([key, type]) => {
                     const Icon = type.icon;
@@ -219,22 +221,22 @@ const SpiritualDiary = () => {
               </div>
 
               <div>
-                <label className="text-sm font-medium mb-2 block">Title</label>
+                <label className="text-sm font-medium mb-2 block">{t('spiritualDiary.titleLabel')}</label>
                 <input
                   type="text"
                   value={newEntry.title}
                   onChange={(e) => setNewEntry(prev => ({ ...prev, title: e.target.value }))}
-                  placeholder="Give a title to your entry..."
+                  placeholder={t('spiritualDiary.titlePlaceholder')}
                   className="w-full p-2 rounded-md border border-input bg-background"
                 />
               </div>
 
               <div>
-                <label className="text-sm font-medium mb-2 block">Description</label>
+                <label className="text-sm font-medium mb-2 block">{t('spiritualDiary.descriptionLabel')}</label>
                 <Textarea
                   value={newEntry.content}
                   onChange={(e) => setNewEntry(prev => ({ ...prev, content: e.target.value }))}
-                  placeholder="Describe your experience, dream, feeling or insight..."
+                  placeholder={t('spiritualDiary.descriptionPlaceholder')}
                   rows={4}
                 />
               </div>
@@ -245,14 +247,14 @@ const SpiritualDiary = () => {
                   variant="cosmic" 
                   disabled={saving || !newEntry.title.trim() || !newEntry.content.trim()}
                 >
-                  {saving ? "Saving..." : "Save Entry"}
+                  {saving ? t('spiritualDiary.saving') : t('spiritualDiary.saveEntry')}
                 </Button>
                 <Button 
                   variant="ethereal" 
                   onClick={() => setIsAddingEntry(false)}
                   disabled={saving}
                 >
-                  Cancel
+                  {t('spiritualDiary.cancel')}
                 </Button>
               </div>
             </CardContent>
@@ -306,7 +308,7 @@ const SpiritualDiary = () => {
                     <div className="bg-primary/5 rounded-lg p-4 border-l-4 border-primary">
                       <div className="flex items-center gap-2 mb-2">
                         <Sparkles className="w-4 h-4 text-primary" />
-                        <span className="text-sm font-medium text-primary">Spiritual AI Analysis</span>
+                        <span className="text-sm font-medium text-primary">{t('spiritualDiary.spiritualAiAnalysis')}</span>
                       </div>
                       <p className="text-sm text-muted-foreground italic">
                         {entry.ai_analysis}
@@ -323,12 +325,12 @@ const SpiritualDiary = () => {
           <Card className="mystic-border text-center py-12">
             <CardContent>
               <BookOpen className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
-              <h3 className="text-lg font-medium mb-2">Your diary is empty</h3>
+              <h3 className="text-lg font-medium mb-2">{t('spiritualDiary.emptyDiary')}</h3>
               <p className="text-muted-foreground mb-4">
-                Start by recording your dreams, feelings and spiritual experiences
+                {t('spiritualDiary.emptyDiaryDesc')}
               </p>
               <Button variant="cosmic" onClick={() => setIsAddingEntry(true)}>
-                Make First Entry
+                {t('spiritualDiary.makeFirstEntry')}
               </Button>
             </CardContent>
           </Card>

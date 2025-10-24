@@ -26,6 +26,7 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
+            {/* English routes (default) */}
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/horoscope" element={<Horoscope />} />
@@ -36,6 +37,19 @@ const App = () => (
             <Route path="/diary" element={<SpiritualDiary />} />
             <Route path="/weekly-report" element={<WeeklyReport />} />
             <Route path="/tarot" element={<Tarot />} />
+            
+            {/* Portuguese routes (with /pt prefix) */}
+            <Route path="/pt" element={<Index />} />
+            <Route path="/pt/auth" element={<Auth />} />
+            <Route path="/pt/horoscope" element={<Horoscope />} />
+            <Route path="/pt/compatibility" element={<Compatibility />} />
+            <Route path="/pt/love-sketch" element={<LoveSketch />} />
+            <Route path="/pt/astral-map" element={<AstralMap />} />
+            <Route path="/pt/ai-oracle" element={<AIOracle />} />
+            <Route path="/pt/diary" element={<SpiritualDiary />} />
+            <Route path="/pt/weekly-report" element={<WeeklyReport />} />
+            <Route path="/pt/tarot" element={<Tarot />} />
+            
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Sparkles, Star, Moon, Sun, Crown, Eye } from "lucide-react";
 import { DailyHoroscope } from "./DailyHoroscope";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface EterniaLandingProps {
   onExplore: () => void;
@@ -10,31 +11,32 @@ interface EterniaLandingProps {
 }
 
 export const EterniaLanding = ({ onExplore, showHoroscope = true }: EterniaLandingProps) => {
+  const { t } = useTranslation();
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
 
   const mysticalFeatures = [
     {
       icon: Star,
-      title: "Premium Astral Map",
-      description: "Unveil the cosmic secrets of your personality",
+      title: t('landing.features.premiumAstralMap.title'),
+      description: t('landing.features.premiumAstralMap.description'),
       accent: "text-secondary"
     },
     {
       icon: Eye,
-      title: "Celestial Oracle",
-      description: "Consult the divine oracle powered by ancestral wisdom",
+      title: t('landing.features.celestialOracle.title'),
+      description: t('landing.features.celestialOracle.description'),
       accent: "text-primary"
     },
     {
       icon: Moon,
-      title: "Lunar Rituals",
-      description: "Synchronize with lunar cycles for manifestation",
+      title: t('landing.features.lunarRituals.title'),
+      description: t('landing.features.lunarRituals.description'),
       accent: "text-secondary"
     },
     {
       icon: Sparkles,
-      title: "Mystical Tarot",
-      description: "Sacred cards reveal your soul's path",
+      title: t('landing.features.mysticalTarot.title'),
+      description: t('landing.features.mysticalTarot.description'),
       accent: "text-primary"
     }
   ];
@@ -56,12 +58,12 @@ export const EterniaLanding = ({ onExplore, showHoroscope = true }: EterniaLandi
           <div className="flex items-center justify-center mb-6">
             <Crown className="w-8 h-8 text-primary mr-3" />
             <h1 className="brand-title text-6xl md:text-7xl font-bold ethereal-text">
-              Eternia
+              {t('landing.title')}
             </h1>
             <Crown className="w-8 h-8 text-primary ml-3" />
           </div>
           <p className="text-foreground/80 text-xl font-inter max-w-2xl mx-auto leading-relaxed">
-            Mystical Portal where Cosmos and Luxury meet in perfect celestial harmony
+            {t('landing.subtitle')}
           </p>
         </header>
 
@@ -74,7 +76,7 @@ export const EterniaLanding = ({ onExplore, showHoroscope = true }: EterniaLandi
           >
             <span className="relative z-10 flex items-center">
               <Sparkles className="w-5 h-5 mr-2 group-hover:animate-pulse" />
-              Explore Now
+              {t('landing.exploreNow')}
               <Sun className="w-5 h-5 ml-2 group-hover:rotate-180 transition-transform duration-700" />
             </span>
             <div className="absolute inset-0 bg-gradient-aura opacity-0 group-hover:opacity-20 transition-opacity duration-500"></div>
@@ -118,12 +120,11 @@ export const EterniaLanding = ({ onExplore, showHoroscope = true }: EterniaLandi
             <div className="text-center mb-8">
               <h2 className="font-cinzel text-3xl font-bold ethereal-text mb-4 flex items-center justify-center">
                 <Sun className="w-6 h-6 text-primary mr-3" />
-                Celestial Horoscope
+                {t('landing.celestialHoroscope')}
                 <Moon className="w-6 h-6 text-secondary ml-3" />
               </h2>
               <p className="text-foreground/80 text-lg font-inter max-w-3xl mx-auto leading-relaxed">
-                Unlock the mysteries of the cosmos through personalized astrological insights. 
-                Your birth chart holds the keys to understanding your destiny, relationships, and spiritual path.
+                {t('landing.horoscopeDescription')}
               </p>
             </div>
             <DailyHoroscope />
@@ -134,7 +135,7 @@ export const EterniaLanding = ({ onExplore, showHoroscope = true }: EterniaLandi
         <div className="text-center">
           <blockquote className="luxury-card p-8 max-w-4xl mx-auto">
             <p className="font-cinzel text-2xl text-foreground/90 italic leading-relaxed mb-4">
-              "The stars whisper ancestral secrets to those who know how to listen..."
+              {t('landing.quote')}
             </p>
             <div className="flex items-center justify-center">
               <div className="h-px bg-gradient-to-r from-transparent via-primary to-transparent w-24"></div>

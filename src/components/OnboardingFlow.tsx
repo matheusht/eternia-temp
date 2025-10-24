@@ -13,6 +13,7 @@ import { MaritalStatus } from "./onboarding/MaritalStatus";
 import { InterestsSelection } from "./onboarding/InterestsSelection";
 import { PersonalizationSummary } from "./onboarding/PersonalizationSummary";
 import { EterniaLanding } from "./EterniaLanding";
+import { useTranslation } from "@/hooks/useTranslation";
 
 
 interface OnboardingData {
@@ -31,6 +32,7 @@ interface OnboardingFlowProps {
 }
 
 export const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
+  const { t } = useTranslation();
   const [step, setStep] = useState(0);
   const [data, setData] = useState<OnboardingData>({
     displayName: "",
@@ -44,14 +46,14 @@ export const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
   });
 
   const goals = [
-    { id: "self_knowledge", label: "Better understand myself and others", icon: Brain, description: "Discover unique personality and characteristics" },
-    { id: "love", label: "Improve relationship with partner", icon: HeartHandshake, description: "Strengthen existing loving bonds" },
-    { id: "insights", label: "Receive daily insights and tips", icon: Sparkles, description: "Personalized guidance for daily life" },
-    { id: "future", label: "Prepare for the future", icon: Target, description: "Planning and preparation for challenges" },
-    { id: "soulmate", label: "Find my soulmate", icon: Heart, description: "Discover true love of life" },
-    { id: "compatibility", label: "Check compatibility", icon: Star, description: "Analyze affinity with other people" },
-    { id: "guidance", label: "Get guidance and advice", icon: Search, description: "Spiritual guidance for important decisions" },
-    { id: "prosperity", label: "Something else (custom)", icon: DollarSign, description: "Unique specific goals" }
+    { id: "selfKnowledge", label: t('onboarding.goals.selfKnowledge'), icon: Brain, description: t('onboarding.goals.selfKnowledgeDesc') },
+    { id: "love", label: t('onboarding.goals.love'), icon: HeartHandshake, description: t('onboarding.goals.loveDesc') },
+    { id: "prosperity", label: t('onboarding.goals.prosperity'), icon: Sparkles, description: t('onboarding.goals.prosperityDesc') },
+    { id: "spirituality", label: t('onboarding.goals.spirituality'), icon: Target, description: t('onboarding.goals.spiritualityDesc') },
+    { id: "healing", label: t('onboarding.goals.healing'), icon: Heart, description: t('onboarding.goals.healingDesc') },
+    { id: "guidance", label: t('onboarding.goals.guidance'), icon: Star, description: t('onboarding.goals.guidanceDesc') },
+    { id: "protection", label: t('onboarding.goals.protection'), icon: Search, description: t('onboarding.goals.protectionDesc') },
+    { id: "intuition", label: t('onboarding.goals.intuition'), icon: DollarSign, description: t('onboarding.goals.intuitionDesc') }
   ];
 
   const handleNext = () => {
@@ -90,7 +92,7 @@ export const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
   const toggleGoal = (goalId: string) => {
     setData(prev => ({
       ...prev,
-      goals: prev.goals.includes(goalId) 
+      goals: prev.goals.includes(goalId)
         ? prev.goals.filter(id => id !== goalId)
         : [...prev.goals, goalId]
     }));
@@ -114,11 +116,11 @@ export const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
             {/* Progress bar */}
             <div className="mb-6">
               <div className="flex justify-between text-sm text-muted-foreground mb-2">
-                <span>Progress: {Math.round(getProgressPercentage())}</span>
+                <span>{t('onboarding.progress')}: {Math.round(getProgressPercentage())}</span>
                 <span>{Math.round(getProgressPercentage())}%</span>
               </div>
               <div className="w-full bg-background/20 rounded-full h-2">
-                <div 
+                <div
                   className="bg-gradient-cosmic h-2 rounded-full transition-all duration-500"
                   style={{ width: `${getProgressPercentage()}%` }}
                 />
@@ -134,27 +136,25 @@ export const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
               <div className="w-12 h-12 mx-auto mb-3">
                 <img src={spiritualIcon} alt="Eternia Logo" className="w-12 h-12 object-contain" />
               </div>
-              <CardTitle className="text-xl font-playfair ethereal-text">What are your goals?</CardTitle>
-              <p className="text-sm text-muted-foreground">Choose what you want to achieve</p>
+              <CardTitle className="text-xl font-playfair ethereal-text">{t('onboarding.goalsTitle')}</CardTitle>
+              <p className="text-sm text-muted-foreground">{t('onboarding.goalsDescription')}</p>
             </CardHeader>
             <CardContent className="space-y-3 px-4 pb-4">
               <div className="max-h-80 overflow-y-auto space-y-2">
                 {goals.map((goal) => (
                   <div
                     key={goal.id}
-                    className={`p-3 rounded-lg cursor-pointer transition-all duration-300 border ${
-                      data.goals.includes(goal.id) 
-                        ? 'border-primary bg-primary/10 shadow-mystic' 
-                        : 'border-border hover:border-primary/50 mystic-border'
-                    }`}
+                    className={`p-3 rounded-lg cursor-pointer transition-all duration-300 border ${data.goals.includes(goal.id)
+                      ? 'border-primary bg-primary/10 shadow-mystic'
+                      : 'border-border hover:border-primary/50 mystic-border'
+                      }`}
                     onClick={() => toggleGoal(goal.id)}
                   >
                     <div className="flex items-center space-x-2">
-                      <div className={`w-4 h-4 rounded border-2 flex items-center justify-center ${
-                        data.goals.includes(goal.id) 
-                          ? 'border-primary bg-primary' 
-                          : 'border-muted-foreground'
-                      }`}>
+                      <div className={`w-4 h-4 rounded border-2 flex items-center justify-center ${data.goals.includes(goal.id)
+                        ? 'border-primary bg-primary'
+                        : 'border-muted-foreground'
+                        }`}>
                         {data.goals.includes(goal.id) && (
                           <div className="w-1.5 h-1.5 bg-primary-foreground rounded-full" />
                         )}
@@ -171,13 +171,13 @@ export const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
                 ))}
               </div>
 
-              <Button 
-                onClick={handleNext} 
+              <Button
+                onClick={handleNext}
                 disabled={!isStepValid()}
-                variant="cosmic" 
+                variant="cosmic"
                 className="w-full mt-4"
               >
-                Next
+                {t('onboarding.next')}
               </Button>
             </CardContent>
           </Card>
@@ -187,14 +187,14 @@ export const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
         {step === 2 && (
           <Card className="mystic-border cosmic-glow">
             <CardHeader className="text-center pb-4">
-              <CardTitle className="text-2xl font-playfair ethereal-text">When were you born?</CardTitle>
-              <p className="text-muted-foreground">Your birth date determines your zodiac sign</p>
+              <CardTitle className="text-2xl font-playfair ethereal-text">{t('onboarding.birthDateTitle')}</CardTitle>
+              <p className="text-muted-foreground">{t('onboarding.birthDateDescription')}</p>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="birthDate" className="flex items-center gap-2">
                   <Calendar className="w-4 h-4 text-primary" />
-                  Birth Date
+                  {t('onboarding.birthDateLabel')}
                 </Label>
                 <Input
                   id="birthDate"
@@ -211,13 +211,13 @@ export const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
                 <ZodiacWheel selectedDate={data.birthDate} />
               </div>
 
-              <Button 
-                onClick={handleNext} 
+              <Button
+                onClick={handleNext}
                 disabled={!isStepValid()}
-                variant="cosmic" 
+                variant="cosmic"
                 className="w-full"
               >
-                Next
+                {t('onboarding.next')}
               </Button>
             </CardContent>
           </Card>
@@ -227,14 +227,14 @@ export const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
         {step === 3 && (
           <Card className="mystic-border cosmic-glow">
             <CardHeader className="text-center pb-4">
-              <CardTitle className="text-2xl font-playfair ethereal-text">What time were you born?</CardTitle>
-              <p className="text-muted-foreground">The time defines your ascendant and astrological houses</p>
+              <CardTitle className="text-2xl font-playfair ethereal-text">{t('onboarding.birthTimeTitle')}</CardTitle>
+              <p className="text-muted-foreground">{t('onboarding.birthTimeDescription')}</p>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="birthTime" className="flex items-center gap-2">
                   <Clock className="w-4 h-4 text-primary" />
-                  Birth Time
+                  {t('onboarding.birthTimeLabel')}
                 </Label>
                 <Input
                   id="birthTime"
@@ -250,13 +250,13 @@ export const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
                 <AstrologicalChart selectedTime={data.birthTime} />
               </div>
 
-              <Button 
-                onClick={handleNext} 
+              <Button
+                onClick={handleNext}
                 disabled={!isStepValid()}
-                variant="cosmic" 
+                variant="cosmic"
                 className="w-full"
               >
-                Continue
+                {t('onboarding.continue')}
               </Button>
             </CardContent>
           </Card>
@@ -267,12 +267,12 @@ export const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
           <Card className="mystic-border cosmic-glow">
             <CardContent className="p-6">
               <HoroscopeImportance />
-              <Button 
-                onClick={handleNext} 
-                variant="cosmic" 
+              <Button
+                onClick={handleNext}
+                variant="cosmic"
                 className="w-full mt-6"
               >
-                I understand, continue
+                {t('onboarding.understand')}
               </Button>
             </CardContent>
           </Card>
@@ -282,17 +282,17 @@ export const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
         {step === 5 && (
           <Card className="mystic-border cosmic-glow">
             <CardContent className="p-6">
-              <GenderSelection 
+              <GenderSelection
                 selectedGender={data.gender}
                 onGenderSelect={(gender) => setData({ ...data, gender })}
               />
-              <Button 
-                onClick={handleNext} 
+              <Button
+                onClick={handleNext}
                 disabled={!isStepValid()}
-                variant="cosmic" 
+                variant="cosmic"
                 className="w-full mt-6"
               >
-                Continue
+                {t('onboarding.continue')}
               </Button>
             </CardContent>
           </Card>
@@ -302,17 +302,17 @@ export const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
         {step === 6 && (
           <Card className="mystic-border cosmic-glow">
             <CardContent className="p-6">
-              <MaritalStatus 
+              <MaritalStatus
                 selectedStatus={data.maritalStatus}
                 onStatusSelect={(status) => setData({ ...data, maritalStatus: status })}
               />
-              <Button 
-                onClick={handleNext} 
+              <Button
+                onClick={handleNext}
                 disabled={!isStepValid()}
-                variant="cosmic" 
+                variant="cosmic"
                 className="w-full mt-6"
               >
-                Continue
+                {t('onboarding.continue')}
               </Button>
             </CardContent>
           </Card>
@@ -322,17 +322,17 @@ export const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
         {step === 7 && (
           <Card className="mystic-border cosmic-glow">
             <CardContent className="p-6">
-              <InterestsSelection 
+              <InterestsSelection
                 selectedInterests={data.interests}
                 onInterestsChange={(interests) => setData({ ...data, interests })}
               />
-              <Button 
-                onClick={handleNext} 
+              <Button
+                onClick={handleNext}
                 disabled={!isStepValid()}
-                variant="cosmic" 
+                variant="cosmic"
                 className="w-full mt-6"
               >
-                Continue
+                {t('onboarding.continue')}
               </Button>
             </CardContent>
           </Card>
@@ -342,18 +342,18 @@ export const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
         {step === 8 && (
           <Card className="mystic-border cosmic-glow">
             <CardHeader className="text-center pb-4">
-              <CardTitle className="text-2xl font-playfair ethereal-text">Final details</CardTitle>
-              <p className="text-muted-foreground">What would you like to be called and where were you born?</p>
+              <CardTitle className="text-2xl font-playfair ethereal-text">{t('onboarding.finalTitle')}</CardTitle>
+              <p className="text-muted-foreground">{t('onboarding.finalDescription')}</p>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="displayName" className="flex items-center gap-2">
                   <User className="w-4 h-4 text-primary" />
-                  What would you like to be called?
+                  {t('onboarding.displayNameLabel')}
                 </Label>
                 <Input
                   id="displayName"
-                  placeholder="Your name or nickname"
+                  placeholder={t('onboarding.displayNamePlaceholder')}
                   value={data.displayName}
                   onChange={(e) => setData({ ...data, displayName: e.target.value })}
                   className="bg-background/50"
@@ -363,11 +363,11 @@ export const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
               <div className="space-y-2">
                 <Label htmlFor="birthLocation" className="flex items-center gap-2">
                   <MapPin className="w-4 h-4 text-primary" />
-                  Birth Location
+                  {t('onboarding.birthLocationLabel')}
                 </Label>
                 <Input
                   id="birthLocation"
-                  placeholder="City, State/Country"
+                  placeholder={t('onboarding.birthLocationPlaceholder')}
                   value={data.birthLocation}
                   onChange={(e) => setData({ ...data, birthLocation: e.target.value })}
                   className="bg-background/50"
@@ -378,13 +378,13 @@ export const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
                 <PersonalizationSummary userData={data} />
               )}
 
-              <Button 
-                onClick={handleNext} 
+              <Button
+                onClick={handleNext}
                 disabled={!isStepValid()}
-                variant="cosmic" 
+                variant="cosmic"
                 className="w-full mt-6"
               >
-                Continue
+                {t('onboarding.continue')}
               </Button>
             </CardContent>
           </Card>

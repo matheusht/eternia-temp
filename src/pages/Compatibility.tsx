@@ -4,11 +4,13 @@ import { useAuth } from "@/hooks/useAuth";
 import { useUserData } from "@/hooks/useUserData";
 import { MarriageCompatibility } from "@/components/MarriageCompatibility";
 import { AppLayout } from "@/components/AppLayout";
+import { useTranslation } from "@/hooks/useTranslation";
 
 const Compatibility = () => {
   const { user } = useAuth();
   const { profile } = useUserData();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!user) {
@@ -19,7 +21,7 @@ const Compatibility = () => {
   if (!user || !profile) {
     return (
       <div className="min-h-screen bg-gradient-mystic flex items-center justify-center">
-        <div className="text-foreground text-xl font-cinzel">Loading cosmic energies...</div>
+        <div className="text-foreground text-xl font-cinzel">{t('common.loadingCosmicEnergies')}</div>
       </div>
     );
   }

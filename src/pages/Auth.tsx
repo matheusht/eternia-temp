@@ -9,29 +9,30 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { Stars, Sparkles, Mail, ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { z } from "zod";
+import { useTranslation } from "@/hooks/useTranslation";
 
-const emailSchema = z.object({
+const createEmailSchema = (t: (key: string) => string) => z.object({
   email: z.string()
-    .email({ message: "Please enter a valid email address" })
-    .max(255, { message: "Email must be less than 255 characters" })
+    .email({ message: t('auth.emailInvalid') })
+    .max(255, { message: t('auth.emailTooLong') })
 });
 
-const passwordSchema = z.object({
+const createPasswordSchema = (t: (key: string) => string) => z.object({
   email: z.string()
-    .email({ message: "Please enter a valid email address" })
-    .max(255, { message: "Email must be less than 255 characters" }),
+    .email({ message: t('auth.emailInvalid') })
+    .max(255, { message: t('auth.emailTooLong') }),
   password: z.string()
-    .min(6, { message: "Password must be at least 6 characters" })
-    .max(100, { message: "Password must be less than 100 characters" })
+    .min(6, { message: t('auth.passwordTooShort') })
+    .max(100, { message: t('auth.passwordTooLong') })
 });
 
-const newPasswordSchema = z.object({
+const createNewPasswordSchema = (t: (key: string) => string) => z.object({
   password: z.string()
-    .min(6, { message: "Password must be at least 6 characters" })
-    .max(100, { message: "Password must be less than 100 characters" }),
+    .min(6, { message: t('auth.passwordTooShort') })
+    .max(100, { message: t('auth.passwordTooLong') }),
   confirmPassword: z.string()
 }).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
+  message: t('auth.passwordsDontMatch'),
   path: ["confirmPassword"],
 });
 
@@ -47,22 +48,23 @@ const Auth = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  
+
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   useEffect(() => {
     // Check URL parameters for password recovery
     const urlParams = new URLSearchParams(window.location.search);
     const accessToken = urlParams.get('access_token');
     const type = urlParams.get('type');
-    
+
     if (accessToken && type === 'recovery') {
       setIsPasswordRecovery(true);
       return;
     }
-    
+
     // Check if user is already logged in
     const checkAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -87,6 +89,7 @@ const Auth = () => {
 
     try {
       // Validate input
+      const passwordSchema = createPasswordSchema(t);
       const validationResult = passwordSchema.safeParse({
         email: email.trim(),
         password
@@ -95,7 +98,7 @@ const Auth = () => {
       if (!validationResult.success) {
         const error = validationResult.error.errors[0];
         toast({
-          title: "Validation Error",
+          title: t('auth.validationError'),
           description: error.message,
           variant: "destructive",
         });
@@ -118,15 +121,15 @@ const Auth = () => {
 
       if (data.user) {
         toast({
-          title: "Sign in successful",
-          description: "Bem-vindo de volta ao seu caminho espiritual.",
+          title: t('auth.signInSuccess'),
+          description: t('auth.signInSuccessDescription'),
         });
         window.location.href = '/';
       }
     } catch (error: any) {
       toast({
-        title: "Erro no login",
-        description: error.message || "Erro ao fazer login. Tente novamente.",
+        title: t('auth.signInError'),
+        description: error.message || t('auth.signInErrorDescription'),
         variant: "destructive",
       });
     } finally {
@@ -140,6 +143,7 @@ const Auth = () => {
 
     try {
       // Validate email
+      const emailSchema = createEmailSchema(t);
       const validationResult = emailSchema.safeParse({
         email: resetEmail.trim()
       });
@@ -147,7 +151,7 @@ const Auth = () => {
       if (!validationResult.success) {
         const error = validationResult.error.errors[0];
         toast({
-          title: "Validation Error",
+          title: t('auth.validationError'),
           description: error.message,
           variant: "destructive",
         });
@@ -164,15 +168,15 @@ const Auth = () => {
       if (error) throw error;
 
       toast({
-        title: "Password Reset Email Sent",
-        description: "Check your email for password reset instructions.",
+        title: t('auth.passwordResetSent'),
+        description: t('auth.passwordResetSentDescription'),
       });
 
       setShowForgotPassword(false);
       setResetEmail('');
     } catch (error: any) {
       toast({
-        title: "Error",
+        title: t('auth.error'),
         description: error.message || "Failed to send reset email. Please try again.",
         variant: "destructive",
       });
@@ -187,6 +191,7 @@ const Auth = () => {
 
     try {
       // Validate new password
+      const newPasswordSchema = createNewPasswordSchema(t);
       const validationResult = newPasswordSchema.safeParse({
         password: newPassword,
         confirmPassword
@@ -195,7 +200,7 @@ const Auth = () => {
       if (!validationResult.success) {
         const error = validationResult.error.errors[0];
         toast({
-          title: "Validation Error",
+          title: t('auth.validationError'),
           description: error.message,
           variant: "destructive",
         });
@@ -209,8 +214,8 @@ const Auth = () => {
       if (error) throw error;
 
       toast({
-        title: "Password Updated",
-        description: "Your password has been successfully updated.",
+        title: t('auth.passwordUpdated'),
+        description: t('auth.passwordUpdatedDescription'),
       });
 
       // Clear the URL parameters and redirect to home
@@ -220,7 +225,7 @@ const Auth = () => {
 
     } catch (error: any) {
       toast({
-        title: "Error",
+        title: t('auth.error'),
         description: error.message || "Failed to update password. Please try again.",
         variant: "destructive",
       });
@@ -232,38 +237,38 @@ const Auth = () => {
   return (
     <div className="min-h-screen cosmic-bg flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-accent/20" />
-      
-      
+
+
       <Card className="w-full max-w-md relative bg-card/80 backdrop-blur-sm border-white/20">
         <CardHeader className="text-center space-y-4">
           <div className="flex justify-center">
-            <img 
-              src="/assets/eternia-new-logo.png" 
+            <img
+              src="/assets/eternia-new-logo.png"
               alt="Eternia Logo"
               className="h-20 w-20 object-contain"
             />
           </div>
           <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-            Welcome to Eternia
+            {t('auth.welcomeTitle')}
           </CardTitle>
           <CardDescription>
-            Your spiritual journey begins here
+            {t('auth.welcomeDescription')}
           </CardDescription>
         </CardHeader>
-        
+
         <CardContent>
           {isPasswordRecovery ? (
             <>
               <div className="mb-4">
-                <h3 className="text-lg font-medium text-center">Set New Password</h3>
+                <h3 className="text-lg font-medium text-center">{t('auth.setNewPassword')}</h3>
                 <p className="text-sm text-muted-foreground text-center mt-2">
-                  Please enter your new password below
+                  {t('auth.setNewPasswordDescription')}
                 </p>
               </div>
 
               <form onSubmit={handleNewPassword} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="new-password">New Password</Label>
+                  <Label htmlFor="new-password">{t('auth.newPassword')}</Label>
                   <div className="relative">
                     <Input
                       id="new-password"
@@ -271,7 +276,7 @@ const Auth = () => {
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
                       required
-                      placeholder="Enter your new password"
+                      placeholder={t('auth.enterNewPassword')}
                       className="pr-10"
                     />
                     <button
@@ -285,7 +290,7 @@ const Auth = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="confirm-password">Confirm Password</Label>
+                  <Label htmlFor="confirm-password">{t('auth.confirmPassword')}</Label>
                   <div className="relative">
                     <Input
                       id="confirm-password"
@@ -293,7 +298,7 @@ const Auth = () => {
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       required
-                      placeholder="Confirm your new password"
+                      placeholder={t('auth.confirmNewPassword')}
                       className="pr-10"
                     />
                     <button
@@ -305,49 +310,49 @@ const Auth = () => {
                     </button>
                   </div>
                 </div>
-                
-                <Button 
-                  type="submit" 
-                  className="w-full" 
+
+                <Button
+                  type="submit"
+                  className="w-full"
                   disabled={isLoading}
                 >
-                  {isLoading ? "Updating..." : "Update Password"}
+                  {isLoading ? t('auth.updating') : t('auth.updatePassword')}
                 </Button>
               </form>
             </>
           ) : !showForgotPassword ? (
             <>
               <form onSubmit={handleSignIn} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="signin-email">Email</Label>
-              <Input
-                id="signin-email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                placeholder="Enter your email"
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="signin-password">Password</Label>
-              <Input
-                id="signin-password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                placeholder="Enter your password"
-              />
-            </div>
-            
-                <Button 
-                  type="submit" 
-                  className="w-full" 
+                <div className="space-y-2">
+                  <Label htmlFor="signin-email">{t('auth.email')}</Label>
+                  <Input
+                    id="signin-email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    placeholder={t('auth.enterEmail')}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="signin-password">{t('auth.password')}</Label>
+                  <Input
+                    id="signin-password"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    placeholder={t('auth.enterPassword')}
+                  />
+                </div>
+
+                <Button
+                  type="submit"
+                  className="w-full"
                   disabled={isLoading}
                 >
-                  {isLoading ? "Loading..." : "Sign In"}
+                  {isLoading ? t('auth.loading') : t('auth.signIn')}
                 </Button>
               </form>
 
@@ -356,7 +361,7 @@ const Auth = () => {
                   onClick={() => setShowForgotPassword(true)}
                   className="text-sm text-primary hover:underline"
                 >
-                  Forgot your password?
+                  {t('auth.forgotPassword')}
                 </button>
               </div>
             </>
@@ -369,12 +374,12 @@ const Auth = () => {
                 >
                   <ArrowLeft className="w-4 h-4" />
                 </button>
-                <h3 className="text-lg font-medium">Reset Password</h3>
+                <h3 className="text-lg font-medium">{t('auth.resetPassword')}</h3>
               </div>
 
               <form onSubmit={handleForgotPassword} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="reset-email">Email</Label>
+                  <Label htmlFor="reset-email">{t('auth.email')}</Label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                     <Input
@@ -383,30 +388,30 @@ const Auth = () => {
                       value={resetEmail}
                       onChange={(e) => setResetEmail(e.target.value)}
                       required
-                      placeholder="Enter your email address"
+                      placeholder={t('auth.enterEmail')}
                       className="pl-10"
                     />
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    We'll send you a link to reset your password
+                    {t('auth.resetPasswordHelp')}
                   </p>
                 </div>
-                
-                <Button 
-                  type="submit" 
-                  className="w-full" 
+
+                <Button
+                  type="submit"
+                  className="w-full"
                   disabled={isLoading}
                 >
-                  {isLoading ? "Sending..." : "Send Reset Link"}
+                  {isLoading ? t('auth.sending') : t('auth.sendResetLink')}
                 </Button>
               </form>
             </>
           )}
-          
+
           <div className="mt-6 p-4 bg-card/50 rounded-lg border border-white/10">
             <p className="text-sm text-muted-foreground text-center">
-              Don't have access yet? <br />
-              <span className="text-primary">Purchase your spiritual journey to receive login credentials.</span>
+              {t('auth.noAccess')} <br />
+              <span className="text-primary">{t('auth.purchaseMessage')}</span>
             </p>
           </div>
         </CardContent>
