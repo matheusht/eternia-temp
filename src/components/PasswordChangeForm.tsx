@@ -7,28 +7,33 @@ import { Lock, Eye, EyeOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { z } from "zod";
+import { useTranslation } from "@/hooks/useTranslation";
 
-const passwordSchema = z.object({
-  newPassword: z.string()
-    .min(6, "Password must be at least 6 characters")
-    .max(100, "Password must be less than 100 characters"),
-  confirmPassword: z.string()
-}).refine((data) => data.newPassword === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
-});
+const passwordSchema = z
+  .object({
+    newPassword: z
+      .string()
+      .min(6, "Password must be at least 6 characters")
+      .max(100, "Password must be less than 100 characters"),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
 
 export const PasswordChangeForm = () => {
+  const { toast } = useToast();
+  const { t } = useTranslation();
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPasswords, setShowPasswords] = useState({
     current: false,
     new: false,
-    confirm: false
+    confirm: false,
   });
   const [loading, setLoading] = useState(false);
-  const { toast } = useToast();
 
   const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,7 +43,7 @@ export const PasswordChangeForm = () => {
       // Validate new password
       const validationResult = passwordSchema.safeParse({
         newPassword,
-        confirmPassword
+        confirmPassword,
       });
 
       if (!validationResult.success) {
@@ -53,7 +58,7 @@ export const PasswordChangeForm = () => {
 
       // Update password in Supabase
       const { error } = await supabase.auth.updateUser({
-        password: newPassword
+        password: newPassword,
       });
 
       if (error) throw error;
@@ -70,7 +75,8 @@ export const PasswordChangeForm = () => {
     } catch (error: any) {
       toast({
         title: "Error",
-        description: error.message || "Failed to update password. Please try again.",
+        description:
+          error.message || "Failed to update password. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -78,10 +84,10 @@ export const PasswordChangeForm = () => {
     }
   };
 
-  const togglePasswordVisibility = (field: 'current' | 'new' | 'confirm') => {
-    setShowPasswords(prev => ({
+  const togglePasswordVisibility = (field: "current" | "new" | "confirm") => {
+    setShowPasswords((prev) => ({
       ...prev,
-      [field]: !prev[field]
+      [field]: !prev[field],
     }));
   };
 
@@ -90,13 +96,15 @@ export const PasswordChangeForm = () => {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Lock className="w-5 h-5 text-primary" />
-          Change Password
+          {t("passwordChange.title")}
         </CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handlePasswordChange} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="current-password">Current Password</Label>
+            <Label htmlFor="current-password">
+              {t("passwordChange.currentPassword")}
+            </Label>
             <div className="relative">
               <Input
                 id="current-password"
@@ -104,21 +112,27 @@ export const PasswordChangeForm = () => {
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
                 required
-                placeholder="Enter current password"
+                placeholder={t("passwordChange.currentPasswordPlaceholder")}
                 className="pr-10"
               />
               <button
                 type="button"
-                onClick={() => togglePasswordVisibility('current')}
+                onClick={() => togglePasswordVisibility("current")}
                 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
               >
-                {showPasswords.current ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                {showPasswords.current ? (
+                  <EyeOff className="w-4 h-4" />
+                ) : (
+                  <Eye className="w-4 h-4" />
+                )}
               </button>
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="new-password">New Password</Label>
+            <Label htmlFor="new-password">
+              {t("passwordChange.newPassword")}
+            </Label>
             <div className="relative">
               <Input
                 id="new-password"
@@ -126,21 +140,27 @@ export const PasswordChangeForm = () => {
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 required
-                placeholder="Enter new password"
+                placeholder={t("passwordChange.newPasswordPlaceholder")}
                 className="pr-10"
               />
               <button
                 type="button"
-                onClick={() => togglePasswordVisibility('new')}
+                onClick={() => togglePasswordVisibility("new")}
                 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
               >
-                {showPasswords.new ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                {showPasswords.new ? (
+                  <EyeOff className="w-4 h-4" />
+                ) : (
+                  <Eye className="w-4 h-4" />
+                )}
               </button>
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="confirm-password">Confirm New Password</Label>
+            <Label htmlFor="confirm-password">
+              {t("passwordChange.confirmPassword")}
+            </Label>
             <div className="relative">
               <Input
                 id="confirm-password"
@@ -148,25 +168,33 @@ export const PasswordChangeForm = () => {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
-                placeholder="Confirm new password"
+                placeholder={t("passwordChange.confirmPasswordPlaceholder")}
                 className="pr-10"
               />
               <button
                 type="button"
-                onClick={() => togglePasswordVisibility('confirm')}
+                onClick={() => togglePasswordVisibility("confirm")}
                 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
               >
-                {showPasswords.confirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                {showPasswords.confirm ? (
+                  <EyeOff className="w-4 h-4" />
+                ) : (
+                  <Eye className="w-4 h-4" />
+                )}
               </button>
             </div>
           </div>
 
-          <Button 
-            type="submit" 
-            disabled={loading || !currentPassword || !newPassword || !confirmPassword}
+          <Button
+            type="submit"
+            disabled={
+              loading || !currentPassword || !newPassword || !confirmPassword
+            }
             className="w-full"
           >
-            {loading ? "Updating..." : "Change Password"}
+            {loading
+              ? t("passwordChange.updating")
+              : t("passwordChange.changePassword")}
           </Button>
         </form>
       </CardContent>

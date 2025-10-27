@@ -1,5 +1,7 @@
-// Local Spiritual Oracle - No API costs
-import { getUtilTranslation, type Language } from '@/i18n/translations';
+// Local Spiritual Oracle - Language-aware with translations
+import { getTranslation, type Language } from "@/i18n/translations";
+import { en } from "@/i18n/en";
+import { pt } from "@/i18n/pt";
 
 interface OracleInput {
   message: string;
@@ -13,179 +15,249 @@ interface OracleInput {
   };
 }
 
-const SPIRITUAL_RESPONSES = {
-  energy: [
-    "Your energy is in constant renewal. {name}, the stars indicate a moment of energetic balance.",
-    "I perceive a vibrant aura around you, {name}. Your energy is aligned with your purposes.",
-    "Cosmic energies flow positively through you today, {name}.",
-    "Your spiritual vibration is elevated. Continue cultivating this luminous energy, {name}."
-  ],
-  love: [
-    "The universe is preparing beautiful changes in your love life, {name}.",
-    "I see energies of love approaching. Keep your heart open, {name}.",
-    "The stars indicate that self-love is your key to attracting true relationships, {name}.",
-    "Your emotional aura is purifying, preparing for great connections, {name}."
-  ],
-  prosperity: [
-    "Abundance energies are aligning in your life, {name}.",
-    "I see prosperity opportunities manifesting around you, {name}.",
-    "The universe is conspiring for your financial abundance, {name}.",
-    "Your vibrations are attracting the prosperity you deserve, {name}."
-  ],
-  spirituality: [
-    "Your spiritual connection is strengthening every day, {name}.",
-    "Spiritual masters are guiding your steps on this journey, {name}.",
-    "Your spiritual evolution is evident. Continue on the path of light, {name}.",
-    "Higher dimensions are opening for you, {name}."
-  ],
-  general: [
-    "The universe has magnificent plans for you, {name}. Trust the process.",
-    "Your vibrations are in perfect tune with your deepest desires, {name}.",
-    "The stars smile upon you today, {name}. It's a moment of great possibilities.",
-    "Your spiritual journey is blossoming beautifully, {name}."
-  ],
-  guidance: [
-    "Meditate under the new moon light to amplify your intuition, {name}.",
-    "A bath with coarse salt and lavender will purify your energies, {name}.",
-    "Carry a rose quartz stone to attract self-love, {name}.",
-    "Practice gratitude every morning to raise your vibration, {name}."
-  ]
-};
-
-const RITUALS_BY_GOAL = {
-  "self-knowledge": [
-    "Keep a self-knowledge journal every morning",
-    "Meditate looking in the mirror for 5 minutes",
-    "Write 3 qualities about yourself that you recognize today",
-    "Practice conscious breathing at sunrise"
-  ],
-  love: [
-    "Light a pink candle and visualize love entering your life",
-    "Write a love letter to yourself",
-    "Meditate with your hand on your heart sending love to the world",
-    "Wear pink or red clothes to attract loving energy"
-  ],
-  prosperity: [
-    "Visualize golden coins raining down on you",
-    "Place a coin under the full moon to energize it",
-    "Affirm: 'I deserve and receive abundance' 21 times",
-    "Keep a basil plant at home for prosperity"
-  ],
-  spirituality: [
-    "Say a gratitude prayer upon waking and before sleeping",
-    "Light sandalwood incense to raise your vibration",
-    "Connect with nature for at least 10 minutes",
-    "Practice contemplative silence for 15 minutes"
-  ]
-};
-
-function categorizeMessage(message: string): string {
+function categorizeMessage(message: string, language: Language): string {
   const lowerMessage = message.toLowerCase();
-  
-  if (lowerMessage.includes('energy') || lowerMessage.includes('vibrat')) return 'energy';
-  if (lowerMessage.includes('love') || lowerMessage.includes('relationship') || lowerMessage.includes('romance')) return 'love';
-  if (lowerMessage.includes('money') || lowerMessage.includes('prosperity') || lowerMessage.includes('abundance') || lowerMessage.includes('work')) return 'prosperity';
-  if (lowerMessage.includes('spirit') || lowerMessage.includes('sacred') || lowerMessage.includes('divine')) return 'spirituality';
-  if (lowerMessage.includes('how') || lowerMessage.includes('what') || lowerMessage.includes('ritual') || lowerMessage.includes('practice')) return 'guidance';
-  
-  return 'general';
+
+  // Keywords for both English and Portuguese
+  if (
+    lowerMessage.includes("energy") ||
+    lowerMessage.includes("energia") ||
+    lowerMessage.includes("vibrat") ||
+    lowerMessage.includes("vibração")
+  )
+    return "energy";
+
+  if (
+    lowerMessage.includes("love") ||
+    lowerMessage.includes("amor") ||
+    lowerMessage.includes("relationship") ||
+    lowerMessage.includes("relacionamento") ||
+    lowerMessage.includes("romance")
+  )
+    return "love";
+
+  if (
+    lowerMessage.includes("money") ||
+    lowerMessage.includes("dinheiro") ||
+    lowerMessage.includes("prosperity") ||
+    lowerMessage.includes("prosperidade") ||
+    lowerMessage.includes("abundance") ||
+    lowerMessage.includes("abundância") ||
+    lowerMessage.includes("work") ||
+    lowerMessage.includes("trabalho")
+  )
+    return "prosperity";
+
+  if (
+    lowerMessage.includes("spirit") ||
+    lowerMessage.includes("espirit") ||
+    lowerMessage.includes("sacred") ||
+    lowerMessage.includes("sagrado") ||
+    lowerMessage.includes("divine") ||
+    lowerMessage.includes("divino")
+  )
+    return "spirituality";
+
+  if (
+    lowerMessage.includes("how") ||
+    lowerMessage.includes("como") ||
+    lowerMessage.includes("what") ||
+    lowerMessage.includes("que") ||
+    lowerMessage.includes("ritual") ||
+    lowerMessage.includes("practice") ||
+    lowerMessage.includes("prática")
+  )
+    return "guidance";
+
+  return "general";
 }
 
-function getRandomResponse(category: string): string {
-  const responses = SPIRITUAL_RESPONSES[category as keyof typeof SPIRITUAL_RESPONSES] || SPIRITUAL_RESPONSES.general;
-  return responses[Math.floor(Math.random() * responses.length)];
+function getRandomResponse(category: string, language: Language): string {
+  const responses = getTranslation(
+    language,
+    `utils.oracle.responses.${category}`
+  );
+
+  // If responses is an array in translations, pick random
+  if (typeof responses === "string") {
+    // It's a single string path, not an array - this shouldn't happen with our structure
+    return responses;
+  }
+
+  // The responses are stored as arrays in our translation files
+  // We need to get them properly
+  const responsesKey = `utils.oracle.responses.${category}`;
+  const translationObj = language === "pt" ? pt : en;
+
+  const responseArray = translationObj.utils?.oracle?.responses?.[category];
+
+  if (Array.isArray(responseArray) && responseArray.length > 0) {
+    return responseArray[Math.floor(Math.random() * responseArray.length)];
+  }
+
+  // Fallback
+  return (
+    getTranslation(language, "utils.oracle.responses.general.0") ||
+    "The stars smile upon you today."
+  );
 }
 
-function getRitual(goal: string): string {
-  const rituals = RITUALS_BY_GOAL[goal as keyof typeof RITUALS_BY_GOAL] || RITUALS_BY_GOAL.spirituality;
-  return rituals[Math.floor(Math.random() * rituals.length)];
+function getRitual(goal: string, language: Language): string {
+  // Convert goal from Portuguese to English key if needed
+  const goalMap: Record<string, string> = {
+    autoconhecimento: "selfKnowledge",
+    amor: "love",
+    prosperidade: "prosperity",
+    espiritualidade: "spirituality",
+  };
+
+  const englishGoalKey = goalMap[goal] || goal;
+
+  const translationObj = language === "pt" ? pt : en;
+
+  const rituals = translationObj.utils?.oracle?.rituals?.[englishGoalKey];
+
+  if (Array.isArray(rituals) && rituals.length > 0) {
+    return rituals[Math.floor(Math.random() * rituals.length)];
+  }
+
+  return "";
 }
 
-function addPersonalizedInsight(response: string, userData: OracleInput['userData']): string {
+function addPersonalizedInsight(
+  response: string,
+  userData: OracleInput["userData"],
+  language: Language
+): string {
   const insights = [];
-  
+
   if (userData.goal) {
-    // Convert goal from Portuguese to English
-    const goalMap: Record<string, string> = {
-      "autoconhecimento": "self-knowledge",
-      "amor": "love",
-      "prosperidade": "prosperity", 
-      "espiritualidade": "spirituality"
+    // Map Portuguese goals to translation keys
+    const goalKeyMap: Record<string, string> = {
+      autoconhecimento:
+        "Your quest for self-knowledge is being illuminated by the stars.",
+      amor: "The universe is preparing your heart for great connections.",
+      prosperidade: "Abundance energies recognize your dedication.",
+      espiritualidade:
+        "Your spiritual elevation is visible on the energetic plane.",
     };
-    
-    const englishGoal = goalMap[userData.goal] || userData.goal;
-    
-    const goalInsights = {
-      "self-knowledge": "Your quest for self-knowledge is being illuminated by the stars.",
-      "love": "The universe is preparing your heart for great connections.",
-      "prosperity": "Abundance energies recognize your dedication.",
-      "spirituality": "Your spiritual elevation is visible on the energetic plane."
+
+    const goalKeyMapPt: Record<string, string> = {
+      autoconhecimento:
+        "Sua busca por autoconhecimento está sendo iluminada pelas estrelas.",
+      amor: "O universo está preparando seu coração para grandes conexões.",
+      prosperidade: "Energias de abundância reconhecem sua dedicação.",
+      espiritualidade: "Sua elevação espiritual é visível no plano energético.",
     };
-    insights.push(goalInsights[englishGoal as keyof typeof goalInsights] || "");
+
+    const goalInsight =
+      language === "pt"
+        ? goalKeyMapPt[userData.goal]
+        : goalKeyMap[userData.goal];
+
+    if (goalInsight) insights.push(goalInsight);
   }
-  
+
   if (userData.currentLevel) {
-    const levelInsights = {
-      'Apprentice': "As an apprentice, you are absorbing wisdom quickly.",
-      'Initiate': "Your initiate level reflects admirable dedication.",
-      'Sage': "As a sage, you radiate wisdom to others.",
-      'Master': "Your master level is a blessing to all around you."
+    const levelInsightsEn: Record<string, string> = {
+      Apprentice: "As an apprentice, you are absorbing wisdom quickly.",
+      Initiate: "Your initiate level reflects admirable dedication.",
+      Sage: "As a sage, you radiate wisdom to others.",
+      Master: "Your master level is a blessing to all around you.",
     };
-    insights.push(levelInsights[userData.currentLevel as keyof typeof levelInsights] || "");
+
+    const levelInsightsPt: Record<string, string> = {
+      Apprentice: "Como aprendiz, você está absorvendo sabedoria rapidamente.",
+      Initiate: "Seu nível de iniciado reflete dedicação admirável.",
+      Sage: "Como sábio, você irradia sabedoria aos outros.",
+      Master: "Seu nível de mestre é uma bênção para todos ao seu redor.",
+    };
+
+    const levelInsight =
+      language === "pt"
+        ? levelInsightsPt[userData.currentLevel]
+        : levelInsightsEn[userData.currentLevel];
+
+    if (levelInsight) insights.push(levelInsight);
   }
-  
-  return response + (insights.length > 0 ? ` ${insights.join(' ')}` : '');
+
+  return response + (insights.length > 0 ? ` ${insights.join(" ")}` : "");
 }
 
-export function generateOracleResponse(input: OracleInput, language: Language = 'en'): string {
+export function generateOracleResponse(
+  input: OracleInput,
+  language: Language = "en"
+): string {
   const { message, userData } = input;
-  const category = categorizeMessage(message);
-  const name = userData.displayName || 'dear soul';
-  
-  let response = getRandomResponse(category);
-  response = response.replace('{name}', name);
-  
+  const category = categorizeMessage(message, language);
+  const name =
+    userData.displayName || (language === "pt" ? "alma querida" : "dear soul");
+
+  let response = getRandomResponse(category, language);
+  response = response.replace(/\{name\}/g, name);
+
   // Add ritual or practice if guidance
-  if (category === 'guidance' && userData.goal) {
-    // Convert goal from Portuguese to English
-    const goalMap: Record<string, string> = {
-      "autoconhecimento": "self-knowledge",
-      "amor": "love",
-      "prosperidade": "prosperity",
-      "espiritualidade": "spirituality"
-    };
-    
-    const englishGoal = goalMap[userData.goal] || userData.goal;
-    const ritual = getRitual(englishGoal);
-    response += ` I suggest this ritual for you: ${ritual}.`;
+  if (category === "guidance" && userData.goal) {
+    const ritual = getRitual(userData.goal, language);
+    if (ritual) {
+      const ritualIntro =
+        language === "pt"
+          ? `Sugiro este ritual para você: ${ritual}.`
+          : `I suggest this ritual for you: ${ritual}.`;
+      response += ` ${ritualIntro}`;
+    }
   }
-  
+
   // Add personalized insights
-  response = addPersonalizedInsight(response, userData);
-  
+  response = addPersonalizedInsight(response, userData, language);
+
   return response;
 }
 
 // Personalized greeting responses
-export function generateGreeting(userData: OracleInput['userData'], language: Language = 'en'): string {
-  const name = userData.displayName || 'illuminated soul';
-  
-  // Convert goal from Portuguese to English
-  const goalMap: Record<string, string> = {
-    "autoconhecimento": "self-knowledge",
-    "amor": "love",
-    "prosperidade": "prosperity",
-    "espiritualidade": "spiritual evolution"
+export function generateGreeting(
+  userData: OracleInput["userData"],
+  language: Language = "en"
+): string {
+  const name =
+    userData.displayName ||
+    (language === "pt" ? "alma iluminada" : "illuminated soul");
+
+  // Map goals to readable format
+  const goalMapEn: Record<string, string> = {
+    autoconhecimento: "self-knowledge",
+    amor: "love",
+    prosperidade: "prosperity",
+    espiritualidade: "spiritual evolution",
   };
-  
-  const goal = goalMap[userData.goal || 'espiritualidade'] || 'spiritual evolution';
-  
-  const greetings = [
+
+  const goalMapPt: Record<string, string> = {
+    autoconhecimento: "autoconhecimento",
+    amor: "amor",
+    prosperidade: "prosperidade",
+    espiritualidade: "evolução espiritual",
+  };
+
+  const goalMap = language === "pt" ? goalMapPt : goalMapEn;
+  const goal =
+    goalMap[userData.goal || "espiritualidade"] ||
+    (language === "pt" ? "evolução espiritual" : "spiritual evolution");
+
+  const greetingsEn = [
     `Hello, ${name}! I feel your vibrant energy through the dimensions. I see that your quest is for ${goal}. How can I illuminate your path today?`,
     `Greetings, ${name}! The stars brought me to you. Your journey of ${goal} is being blessed. How can I guide you?`,
     `Welcome, ${name}! Your aura shines with purpose. I see that ${goal} is your current focus. Share your spiritual concerns.`,
-    `${name}, dear soul! The universe whispered your name to my ears. Your search for ${goal} resonates in the higher spheres. How can I help?`
+    `${name}, dear soul! The universe whispered your name to my ears. Your search for ${goal} resonates in the higher spheres. How can I help?`,
   ];
-  
+
+  const greetingsPt = [
+    `Olá, ${name}! Sinto sua energia vibrante através das dimensões. Vejo que sua busca é por ${goal}. Como posso iluminar seu caminho hoje?`,
+    `Saudações, ${name}! As estrelas me trouxeram até você. Sua jornada de ${goal} está sendo abençoada. Como posso guiá-lo?`,
+    `Bem-vindo, ${name}! Sua aura brilha com propósito. Vejo que ${goal} é seu foco atual. Compartilhe suas preocupações espirituais.`,
+    `${name}, alma querida! O universo sussurrou seu nome aos meus ouvidos. Sua busca por ${goal} ressoa nas esferas superiores. Como posso ajudar?`,
+  ];
+
+  const greetings = language === "pt" ? greetingsPt : greetingsEn;
+
   return greetings[Math.floor(Math.random() * greetings.length)];
 }

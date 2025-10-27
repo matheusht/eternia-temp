@@ -21,8 +21,8 @@ const AIOracle = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { profile, addActivity } = useUserData();
-  const { t } = useTranslation();
-  
+  const { t, language } = useTranslation();
+
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -30,7 +30,7 @@ const AIOracle = () => {
   // Redirect if not authenticated
   useEffect(() => {
     if (!user) {
-      navigate('/auth');
+      navigate("/auth");
       return;
     }
   }, [user, navigate]);
@@ -38,24 +38,27 @@ const AIOracle = () => {
   // Initialize conversation when profile is loaded
   useEffect(() => {
     if (profile && messages.length === 0) {
-      const greetingText = generateGreeting({
-        displayName: profile.display_name,
-        birthDate: profile.birth_date,
-        birthTime: profile.birth_time,
-        birthLocation: profile.birth_location,
-        goal: profile.goal,
-        currentLevel: profile.current_level
-      });
-      
+      const greetingText = generateGreeting(
+        {
+          displayName: profile.display_name,
+          birthDate: profile.birth_date,
+          birthTime: profile.birth_time,
+          birthLocation: profile.birth_location,
+          goal: profile.goal,
+          currentLevel: profile.current_level,
+        },
+        language
+      );
+
       const greeting: Message = {
         id: "1",
         text: greetingText,
         isUser: false,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
       setMessages([greeting]);
     }
-  }, [profile, messages.length]);
+  }, [profile, messages.length, language]);
 
   const handleSendMessage = async () => {
     if (!inputMessage.trim() || !profile) return;
@@ -64,61 +67,64 @@ const AIOracle = () => {
       id: Date.now().toString(),
       text: inputMessage,
       isUser: true,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    setMessages((prev) => [...prev, userMessage]);
     const currentMessage = inputMessage;
     setInputMessage("");
     setIsLoading(true);
 
     try {
       // Add activity for IA consultation
-      await addActivity('ia_consulta');
-      
+      await addActivity("ia_consulta");
+
       // Generate local oracle response (no API costs)
-      const oracleResponse = generateOracleResponse({
-        message: currentMessage,
-        userData: {
-          displayName: profile.display_name,
-          birthDate: profile.birth_date,
-          birthTime: profile.birth_time,
-          birthLocation: profile.birth_location,
-          goal: profile.goal,
-          currentLevel: profile.current_level
-        }
-      });
+      const oracleResponse = generateOracleResponse(
+        {
+          message: currentMessage,
+          userData: {
+            displayName: profile.display_name,
+            birthDate: profile.birth_date,
+            birthTime: profile.birth_time,
+            birthLocation: profile.birth_location,
+            goal: profile.goal,
+            currentLevel: profile.current_level,
+          },
+        },
+        language
+      );
 
       // Simulate thinking time for better UX
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      await new Promise((resolve) => setTimeout(resolve, 1500));
 
       const aiResponse: Message = {
         id: (Date.now() + 1).toString(),
         text: oracleResponse,
         isUser: false,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
 
-      setMessages(prev => [...prev, aiResponse]);
+      setMessages((prev) => [...prev, aiResponse]);
     } catch (error) {
-      console.error('Error in Local Oracle:', error);
-      
+      console.error("Error in Local Oracle:", error);
+
       // Fallback response
       const fallbackResponse: Message = {
         id: (Date.now() + 1).toString(),
-        text: t('oracle.errorUnstableEnergies'),
+        text: t("oracle.errorUnstableEnergies"),
         isUser: false,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
-      
-      setMessages(prev => [...prev, fallbackResponse]);
+
+      setMessages((prev) => [...prev, fallbackResponse]);
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSendMessage();
     }
@@ -127,16 +133,16 @@ const AIOracle = () => {
   if (!user || !profile) {
     return (
       <div className="min-h-screen bg-gradient-mystic flex items-center justify-center">
-        <div className="text-white text-xl">{t('oracle.loading')}</div>
+        <div className="text-white text-xl">{t("oracle.loading")}</div>
       </div>
     );
   }
 
   const suggestions = [
-    t('oracle.suggestions.energy'),
-    t('oracle.suggestions.love'),
-    t('oracle.suggestions.ritual'),
-    t('oracle.suggestions.spirituality')
+    t("oracle.suggestions.energy"),
+    t("oracle.suggestions.love"),
+    t("oracle.suggestions.ritual"),
+    t("oracle.suggestions.spirituality"),
   ];
 
   return (
@@ -144,14 +150,16 @@ const AIOracle = () => {
       <div className="min-h-screen cosmic-bg p-4 pb-20">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center justify-center mb-6">
-            <h1 className="text-3xl font-playfair ethereal-text">{t('oracle.title')}</h1>
+            <h1 className="text-3xl font-playfair ethereal-text">
+              {t("oracle.title")}
+            </h1>
           </div>
 
           <Card className="mystic-border">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Sparkles className="w-5 h-5 text-primary" />
-                {t('oracle.subtitle')}
+                {t("oracle.subtitle")}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -160,13 +168,15 @@ const AIOracle = () => {
                 {messages.map((message) => (
                   <div
                     key={message.id}
-                    className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
+                    className={`flex ${
+                      message.isUser ? "justify-end" : "justify-start"
+                    }`}
                   >
                     <div
                       className={`max-w-[80%] p-3 rounded-lg ${
                         message.isUser
-                          ? 'bg-primary text-primary-foreground'
-                          : 'bg-card border border-primary/20'
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-card border border-primary/20"
                       }`}
                     >
                       <p className="text-sm">{message.text}</p>
@@ -176,7 +186,7 @@ const AIOracle = () => {
                     </div>
                   </div>
                 ))}
-                
+
                 {isLoading && (
                   <div className="flex justify-start">
                     <div className="bg-card border border-primary/20 p-3 rounded-lg">
@@ -185,7 +195,7 @@ const AIOracle = () => {
                         <div className="w-2 h-2 bg-primary rounded-full animate-pulse delay-100"></div>
                         <div className="w-2 h-2 bg-primary rounded-full animate-pulse delay-200"></div>
                         <span className="text-sm text-muted-foreground ml-2">
-                          {t('oracle.consulting')}
+                          {t("oracle.consulting")}
                         </span>
                       </div>
                     </div>
@@ -199,7 +209,7 @@ const AIOracle = () => {
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder={t('oracle.inputPlaceholder')}
+                  placeholder={t("oracle.inputPlaceholder")}
                   disabled={isLoading}
                   className="flex-1"
                 />
@@ -215,7 +225,9 @@ const AIOracle = () => {
 
               {/* Quick Questions */}
               <div className="space-y-2">
-                <p className="text-sm text-muted-foreground">{t('oracle.suggestedQuestions')}</p>
+                <p className="text-sm text-muted-foreground">
+                  {t("oracle.suggestedQuestions")}
+                </p>
                 <div className="flex flex-wrap gap-2">
                   {suggestions.map((suggestion, index) => (
                     <Button

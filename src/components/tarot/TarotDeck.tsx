@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { TarotCard, getRandomCards } from '@/utils/tarotCards';
-import { Sparkles, RotateCcw } from 'lucide-react';
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { TarotCard, getRandomCards } from "@/utils/tarotCards";
+import { Sparkles, RotateCcw } from "lucide-react";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface TarotDeckProps {
   onCardSelection: (cards: TarotCard[]) => void;
@@ -9,20 +10,25 @@ interface TarotDeckProps {
   disabled?: boolean;
 }
 
-export const TarotDeck: React.FC<TarotDeckProps> = ({ onCardSelection, maxCards, disabled }) => {
+export const TarotDeck: React.FC<TarotDeckProps> = ({
+  onCardSelection,
+  maxCards,
+  disabled,
+}) => {
+  const { t, language } = useTranslation();
   const [isShuffling, setIsShuffling] = useState(false);
   const [deckShuffled, setDeckShuffled] = useState(false);
 
   const shuffleDeck = async () => {
     setIsShuffling(true);
     setDeckShuffled(false);
-    
+
     // Simulates shuffling with delay for visual effect
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    const selectedCards = getRandomCards(maxCards);
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+
+    const selectedCards = getRandomCards(maxCards, language);
     onCardSelection(selectedCards);
-    
+
     setIsShuffling(false);
     setDeckShuffled(true);
   };
@@ -41,11 +47,13 @@ export const TarotDeck: React.FC<TarotDeckProps> = ({ onCardSelection, maxCards,
           <div
             key={index}
             className={`absolute inset-0 bg-gradient-to-br from-purple-900 to-indigo-900 rounded-lg border-2 border-gold-400 shadow-lg transition-all duration-300 ${
-              isShuffling ? 'animate-pulse' : ''
+              isShuffling ? "animate-pulse" : ""
             }`}
             style={{
-              transform: `translateX(${index * 2}px) translateY(${index * -2}px) rotate(${index * 2 - 4}deg)`,
-              zIndex: 5 - index
+              transform: `translateX(${index * 2}px) translateY(${
+                index * -2
+              }px) rotate(${index * 2 - 4}deg)`,
+              zIndex: 5 - index,
             }}
           >
             <div className="w-full h-full flex items-center justify-center">
@@ -58,10 +66,13 @@ export const TarotDeck: React.FC<TarotDeckProps> = ({ onCardSelection, maxCards,
       {/* Instructions */}
       <div className="space-y-2">
         <p className="text-sm text-muted-foreground">
-          {!deckShuffled 
-            ? `Focus on your question and shuffle the cards to select ${maxCards} card${maxCards > 1 ? 's' : ''}`
-            : `${maxCards} card${maxCards > 1 ? 's' : ''} selected for your reading`
-          }
+          {!deckShuffled
+            ? `${t("tarot.deck.focusAndShuffle")} ${maxCards} ${
+                maxCards > 1 ? t("tarot.deck.cards") : t("tarot.deck.card")
+              }`
+            : `${maxCards} ${
+                maxCards > 1 ? t("tarot.deck.cards") : t("tarot.deck.card")
+              } ${t("tarot.deck.selected")}`}
         </p>
       </div>
 
@@ -76,23 +87,19 @@ export const TarotDeck: React.FC<TarotDeckProps> = ({ onCardSelection, maxCards,
             {isShuffling ? (
               <>
                 <Sparkles className="w-4 h-4 mr-2 animate-spin" />
-                Shuffling...
+                {t("tarot.deck.shuffling")}
               </>
             ) : (
               <>
                 <Sparkles className="w-4 h-4 mr-2" />
-                Shuffle Cards
+                {t("tarot.deck.shuffleCards")}
               </>
             )}
           </Button>
         ) : (
-          <Button
-            onClick={resetDeck}
-            variant="outline"
-            disabled={disabled}
-          >
+          <Button onClick={resetDeck} variant="outline" disabled={disabled}>
             <RotateCcw className="w-4 h-4 mr-2" />
-            Shuffle Again
+            {t("tarot.deck.shuffleAgain")}
           </Button>
         )}
       </div>

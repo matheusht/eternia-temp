@@ -1,8 +1,12 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { useTranslation } from "@/hooks/useTranslation";
+import { Button } from "@/components/ui/button";
 
 const NotFound = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { t, language } = useTranslation();
 
   useEffect(() => {
     console.error(
@@ -11,14 +15,22 @@ const NotFound = () => {
     );
   }, [location.pathname]);
 
+  const handleReturnHome = () => {
+    navigate(language === "pt" ? "/pt" : "/");
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">404</h1>
-        <p className="text-xl text-gray-600 mb-4">Oops! Page not found</p>
-        <a href="/" className="text-blue-500 hover:text-blue-700 underline">
-          Return to Home
-        </a>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-mystic">
+      <div className="text-center p-8">
+        <h1 className="text-6xl font-bold mb-4 text-foreground">
+          {t("notFound.title")}
+        </h1>
+        <p className="text-xl text-muted-foreground mb-8">
+          {t("notFound.message")}
+        </p>
+        <Button onClick={handleReturnHome} variant="cosmic" size="lg">
+          {t("notFound.returnHome")}
+        </Button>
       </div>
     </div>
   );
