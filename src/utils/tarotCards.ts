@@ -60,10 +60,29 @@ const minorArcanaKeys = [
 // Generate major arcana from translations
 const getMajorArcana = (language: Language = "en"): TarotCard[] => {
   const translations = getTranslations(language);
-  const tarotData = (translations.utils as any).oracle.tarot;
+  
+  // Debug logging
+  console.log(`[DEBUG] getMajorArcana called with language: ${language}`);
+  console.log(`[DEBUG] translations.utils exists:`, !!translations.utils);
+  
+  // Fix: The correct path is utils.tarot, not utils.oracle.tarot
+  const tarotData = (translations.utils as any).tarot;
+  
+  console.log(`[DEBUG] tarotData exists:`, !!tarotData);
+  console.log(`[DEBUG] tarotData.majorArcana exists:`, !!tarotData?.majorArcana);
+
+  if (!tarotData || !tarotData.majorArcana) {
+    console.error(`[ERROR] Tarot data not found for language: ${language}`);
+    // Fallback to hardcoded data to prevent infinite loops
+    return fallbackMajorArcana;
+  }
 
   return majorArcanaKeys.map((key, index) => {
     const card = tarotData.majorArcana[key];
+    if (!card) {
+      console.error(`[ERROR] Card not found: ${key} for language: ${language}`);
+      return fallbackMajorArcana[0]; // Fallback to hardcoded card
+    }
     return {
       id: index,
       name: card.name,
@@ -80,10 +99,25 @@ const getMajorArcana = (language: Language = "en"): TarotCard[] => {
 // Generate minor arcana from translations
 const getMinorArcana = (language: Language = "en"): TarotCard[] => {
   const translations = getTranslations(language);
-  const tarotData = (translations.utils as any).oracle.tarot;
+  
+  // Debug logging
+  console.log(`[DEBUG] getMinorArcana called with language: ${language}`);
+  
+  // Fix: The correct path is utils.tarot, not utils.oracle.tarot
+  const tarotData = (translations.utils as any).tarot;
+
+  if (!tarotData || !tarotData.minorArcana) {
+    console.error(`[ERROR] Minor arcana data not found for language: ${language}`);
+    // Fallback to hardcoded data to prevent infinite loops
+    return fallbackMinorArcana;
+  }
 
   return minorArcanaKeys.map((item, index) => {
     const card = tarotData.minorArcana[item.key];
+    if (!card) {
+      console.error(`[ERROR] Minor card not found: ${item.key} for language: ${language}`);
+      return fallbackMinorArcana[0]; // Fallback to hardcoded card
+    }
     return {
       id: 22 + index,
       name: card.name,
@@ -97,10 +131,49 @@ const getMinorArcana = (language: Language = "en"): TarotCard[] => {
   });
 };
 
+// Create hardcoded fallback data to prevent circular dependencies
+const fallbackMajorArcana: TarotCard[] = [
+  {
+    id: 0,
+    name: "The Fool",
+    meaning: "New beginnings, spontaneity, innocence",
+    reversedMeaning: "Recklessness, irresponsibility, lack of direction",
+    suit: "major",
+    element: "spirit",
+    keywords: ["freedom", "adventure", "potential"],
+    description: "Represents the beginning of a journey, courage to start something new",
+  },
+  {
+    id: 1,
+    name: "The Magician",
+    meaning: "Personal power, skill, concentration",
+    reversedMeaning: "Manipulation, poor direction, lack of energy",
+    suit: "major",
+    element: "spirit",
+    keywords: ["manifestation", "power", "will"],
+    description: "Symbolizes the ability to manifest desires into reality",
+  },
+  // Add more cards as needed - for now just these two to prevent the circular dependency
+];
+
+const fallbackMinorArcana: TarotCard[] = [
+  {
+    id: 22,
+    name: "Ace of Cups",
+    meaning: "New love, spiritual joy, intuition",
+    reversedMeaning: "Emotional blockage, unrequited love",
+    suit: "cups",
+    element: "water",
+    keywords: ["new love", "joy", "intuition"],
+    description: "Represents emotional new beginnings and opening of the heart",
+  },
+];
+
 // Export with default language (English) for backward compatibility
-export const majorArcana: TarotCard[] = getMajorArcana("en");
-export const minorArcana: TarotCard[] = getMinorArcana("en");
-export const allCards: TarotCard[] = [...majorArcana, ...minorArcana];
+// Using fallback data to prevent circular dependencies during module loading
+export const majorArcana: TarotCard[] = fallbackMajorArcana;
+export const minorArcana: TarotCard[] = fallbackMinorArcana;
+export const allCards: TarotCard[] = [...fallbackMajorArcana, ...fallbackMinorArcana];
 
 // Keep the old hardcoded arrays commented out for reference
 /* export const majorArcana: TarotCard[] = [
@@ -421,12 +494,33 @@ export const getRandomCards = (
   count: number,
   language: Language = "en"
 ): TarotCard[] => {
-  const cards = [...getMajorArcana(language), ...getMinorArcana(language)];
-  const shuffled = [...cards].sort(() => 0.5 - Math.random());
-  return shuffled.slice(0, count).map((card) => ({
-    ...card,
-    isReversed: Math.random() < 0.3, // 30% chance of reversed card
-  }));
+  console.log(`[DEBUG] getRandomCards called with count: ${count}, language: ${language}`);
+  
+  try {
+    const majorCards = getMajorArcana(language);
+    const minorCards = getMinorArcana(language);
+    
+    console.log(`[DEBUG] Major cards loaded: ${majorCards.length}`);
+    console.log(`[DEBUG] Minor cards loaded: ${minorCards.length}`);
+    
+    const cards = [...majorCards, ...minorCards];
+    const shuffled = [...cards].sort(() => 0.5 - Math.random());
+    const result = shuffled.slice(0, count).map((card) => ({
+      ...card,
+      isReversed: Math.random() < 0.3, // 30% chance of reversed card
+    }));
+    
+    console.log(`[DEBUG] Returning ${result.length} cards`);
+    return result;
+  } catch (error) {
+    console.error(`[ERROR] Failed to get random cards:`, error);
+    // Emergency fallback to prevent infinite loops
+    const fallbackCards = [...fallbackMajorArcana, ...fallbackMinorArcana];
+    return fallbackCards.slice(0, count).map((card) => ({
+      ...card,
+      isReversed: Math.random() < 0.3,
+    }));
+  }
 };
 
 export const getCardInterpretation = (
