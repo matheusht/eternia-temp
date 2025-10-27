@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { TarotCard, getCardInterpretation } from "@/utils/tarotCards";
 import { Eye, Save, RotateCcw } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
-import { useTranslation } from "@/hooks/useTranslation";
+import { useLocation } from "react-router-dom";
 
 interface TarotSpreadProps {
   cards: TarotCard[];
@@ -34,162 +34,347 @@ export const TarotSpreadComponent: React.FC<TarotSpreadProps> = ({
   onSaveReading,
 }) => {
   const { toast } = useToast();
-  const { t, language } = useTranslation();
+  const location = useLocation();
+  const isPortuguese = location.pathname.startsWith("/pt");
+  const language = isPortuguese ? "pt" : "en";
+  
   const [revealedCards, setRevealedCards] = useState<number[]>([]);
   const [interpretation, setInterpretation] = useState<string>("");
   const [isGeneratingInterpretation, setIsGeneratingInterpretation] =
     useState(false);
+
+  // Direct translations object - no external dependencies
+  const texts = {
+    en: {
+      reversed: "Reversed",
+      reversedShort: "Rev.",
+      tapToReveal: "Tap to reveal",
+      clickToReveal: "Click to reveal", 
+      tap: "Tap",
+      interpreting: "Interpreting...",
+      generateInterpretation: "Generate Interpretation",
+      saveReading: "Save Reading",
+      readingSaved: "Reading Saved",
+      readingSavedDesc: "Your reading has been saved to history",
+      generalOverview: "General Overview",
+      tarotReading: "Tarot Reading",
+      positions: {
+        threeCard: {
+          past: "Past",
+          pastDesc: "Past influences",
+          present: "Present", 
+          presentDesc: "Current situation",
+          future: "Future",
+          futureDesc: "Future trends"
+        },
+        celticCross: {
+          present: "Present",
+          presentDesc: "Current situation",
+          challenge: "Challenge",
+          challengeDesc: "What challenges you",
+          distantPast: "Distant Past",
+          distantPastDesc: "Roots of the situation",
+          recentPast: "Recent Past",
+          recentPastDesc: "Recent influences",
+          possibleOutcome: "Possible Outcome",
+          possibleOutcomeDesc: "Possible result",
+          nearFuture: "Near Future",
+          nearFutureDesc: "Upcoming events",
+          yourApproach: "Your Approach",
+          yourApproachDesc: "How you see the situation",
+          externalInfluences: "External Influences",
+          externalInfluencesDesc: "External factors",
+          hopesAndFears: "Hopes and Fears",
+          hopesAndFearsDesc: "Your inner feelings",
+          finalOutcome: "Final Outcome",
+          finalOutcomeDesc: "Final result"
+        },
+        love: {
+          you: "You",
+          youDesc: "Your love energy",
+          partner: "Partner/Interest",
+          partnerDesc: "Other person's energy",
+          relationship: "Relationship",
+          relationshipDesc: "The dynamic between you",
+          obstacles: "Obstacles",
+          obstaclesDesc: "Challenges to overcome",
+          potential: "Potential",
+          potentialDesc: "Future of the relationship"
+        },
+        career: {
+          currentSituation: "Current Situation",
+          currentSituationDesc: "Your professional position",
+          opportunities: "Opportunities",
+          opportunitiesDesc: "Emerging chances",
+          obstacles: "Obstacles",
+          obstaclesDesc: "Professional challenges",
+          outcome: "Outcome",
+          outcomeDesc: "Career trend"
+        }
+      },
+      insights: {
+        greatTransformation: "great spiritual transformation",
+        innerReflection: "inner reflection and need for perspective change",
+        gradualGrowth: "gradual growth and steady progress",
+        overviewText: "Your reading reveals a moment of {{insight}}. The present energies suggest that you are on the right path to achieve your spiritual and personal goals."
+      },
+      spreadNames: {
+        threeCard: "Three Card Reading",
+        celticCross: "Celtic Cross",
+        love: "Love Reading",
+        career: "Career Reading"
+      }
+    },
+    pt: {
+      reversed: "Invertida",
+      reversedShort: "Inv.",
+      tapToReveal: "Toque para revelar",
+      clickToReveal: "Clique para revelar",
+      tap: "Toque",
+      interpreting: "Interpretando...",
+      generateInterpretation: "Gerar Interpretação",
+      saveReading: "Salvar Leitura",
+      readingSaved: "Leitura Salva",
+      readingSavedDesc: "Sua leitura foi salva no histórico",
+      generalOverview: "Visão Geral",
+      tarotReading: "Leitura de Tarô",
+      positions: {
+        threeCard: {
+          past: "Passado",
+          pastDesc: "Influências passadas",
+          present: "Presente",
+          presentDesc: "Situação atual",
+          future: "Futuro",
+          futureDesc: "Tendências futuras"
+        },
+        celticCross: {
+          present: "Presente",
+          presentDesc: "Situação atual",
+          challenge: "Desafio",
+          challengeDesc: "O que te desafia",
+          distantPast: "Passado Distante",
+          distantPastDesc: "Raízes da situação",
+          recentPast: "Passado Recente",
+          recentPastDesc: "Influências recentes",
+          possibleOutcome: "Resultado Possível",
+          possibleOutcomeDesc: "Resultado possível",
+          nearFuture: "Futuro Próximo",
+          nearFutureDesc: "Eventos próximos",
+          yourApproach: "Sua Abordagem",
+          yourApproachDesc: "Como você vê a situação",
+          externalInfluences: "Influências Externas",
+          externalInfluencesDesc: "Fatores externos",
+          hopesAndFears: "Esperanças e Medos",
+          hopesAndFearsDesc: "Seus sentimentos internos",
+          finalOutcome: "Resultado Final",
+          finalOutcomeDesc: "Resultado final"
+        },
+        love: {
+          you: "Você",
+          youDesc: "Sua energia amorosa",
+          partner: "Parceiro/Interesse",
+          partnerDesc: "Energia da outra pessoa",
+          relationship: "Relacionamento",
+          relationshipDesc: "A dinâmica entre vocês",
+          obstacles: "Obstáculos",
+          obstaclesDesc: "Desafios a superar",
+          potential: "Potencial",
+          potentialDesc: "Futuro do relacionamento"
+        },
+        career: {
+          currentSituation: "Situação Atual",
+          currentSituationDesc: "Sua posição profissional",
+          opportunities: "Oportunidades",
+          opportunitiesDesc: "Chances emergentes",
+          obstacles: "Obstáculos",
+          obstaclesDesc: "Desafios profissionais",
+          outcome: "Resultado",
+          outcomeDesc: "Tendência da carreira"
+        }
+      },
+      insights: {
+        greatTransformation: "grande transformação espiritual",
+        innerReflection: "reflexão interna e necessidade de mudança de perspectiva",
+        gradualGrowth: "crescimento gradual e progresso constante",
+        overviewText: "Sua leitura revela um momento de {{insight}}. As energias presentes sugerem que você está no caminho certo para alcançar seus objetivos espirituais e pessoais."
+      },
+      spreadNames: {
+        threeCard: "Leitura de Três Cartas",
+        celticCross: "Cruz Celta",
+        love: "Leitura do Amor",
+        career: "Leitura da Carreira"
+      }
+    }
+  };
+
+  // Simple translation function
+  const t = (key: string, values?: Record<string, string>): string => {
+    const keys = key.split('.');
+    let value: any = texts[language as keyof typeof texts];
+    
+    for (const k of keys) {
+      value = value?.[k];
+      if (value === undefined) {
+        return key; // fallback to key if not found
+      }
+    }
+    
+    let result = typeof value === 'string' ? value : key;
+    
+    // Replace placeholders like {{insight}}
+    if (values && typeof result === 'string') {
+      result = result.replace(/\{\{(\w+)\}\}/g, (_, key) => values[key] || '');
+    }
+    
+    return result;
+  };
 
   // Create spread layouts with translations - memoized to prevent re-renders
   const spreadLayouts = useMemo(
     (): Record<string, SpreadPosition[]> => ({
       "three-card": [
         {
-          name: t("tarotSpread.positions.threeCard.past"),
-          description: t("tarotSpread.positions.threeCard.pastDesc"),
+          name: t("positions.threeCard.past"),
+          description: t("positions.threeCard.pastDesc"),
           x: 0,
           y: 0,
         },
         {
-          name: t("tarotSpread.positions.threeCard.present"),
-          description: t("tarotSpread.positions.threeCard.presentDesc"),
+          name: t("positions.threeCard.present"),
+          description: t("positions.threeCard.presentDesc"),
           x: 1,
           y: 0,
         },
         {
-          name: t("tarotSpread.positions.threeCard.future"),
-          description: t("tarotSpread.positions.threeCard.futureDesc"),
+          name: t("positions.threeCard.future"),
+          description: t("positions.threeCard.futureDesc"),
           x: 2,
           y: 0,
         },
       ],
       "celtic-cross": [
         {
-          name: t("tarotSpread.positions.celticCross.present"),
-          description: t("tarotSpread.positions.celticCross.presentDesc"),
+          name: t("positions.celticCross.present"),
+          description: t("positions.celticCross.presentDesc"),
           x: 1,
           y: 1,
         },
         {
-          name: t("tarotSpread.positions.celticCross.challenge"),
-          description: t("tarotSpread.positions.celticCross.challengeDesc"),
+          name: t("positions.celticCross.challenge"),
+          description: t("positions.celticCross.challengeDesc"),
           x: 1,
           y: 1,
           rotation: 90,
         },
         {
-          name: t("tarotSpread.positions.celticCross.distantPast"),
-          description: t("tarotSpread.positions.celticCross.distantPastDesc"),
+          name: t("positions.celticCross.distantPast"),
+          description: t("positions.celticCross.distantPastDesc"),
           x: 0,
           y: 1,
         },
         {
-          name: t("tarotSpread.positions.celticCross.recentPast"),
-          description: t("tarotSpread.positions.celticCross.recentPastDesc"),
+          name: t("positions.celticCross.recentPast"),
+          description: t("positions.celticCross.recentPastDesc"),
           x: 1,
           y: 0,
         },
         {
-          name: t("tarotSpread.positions.celticCross.possibleOutcome"),
-          description: t(
-            "tarotSpread.positions.celticCross.possibleOutcomeDesc"
-          ),
+          name: t("positions.celticCross.possibleOutcome"),
+          description: t("positions.celticCross.possibleOutcomeDesc"),
           x: 1,
           y: 2,
         },
         {
-          name: t("tarotSpread.positions.celticCross.nearFuture"),
-          description: t("tarotSpread.positions.celticCross.nearFutureDesc"),
+          name: t("positions.celticCross.nearFuture"),
+          description: t("positions.celticCross.nearFutureDesc"),
           x: 2,
           y: 1,
         },
         {
-          name: t("tarotSpread.positions.celticCross.yourApproach"),
-          description: t("tarotSpread.positions.celticCross.yourApproachDesc"),
+          name: t("positions.celticCross.yourApproach"),
+          description: t("positions.celticCross.yourApproachDesc"),
           x: 3,
           y: 3,
         },
         {
-          name: t("tarotSpread.positions.celticCross.externalInfluences"),
-          description: t(
-            "tarotSpread.positions.celticCross.externalInfluencesDesc"
-          ),
+          name: t("positions.celticCross.externalInfluences"),
+          description: t("positions.celticCross.externalInfluencesDesc"),
           x: 3,
           y: 2,
         },
         {
-          name: t("tarotSpread.positions.celticCross.hopesAndFears"),
-          description: t("tarotSpread.positions.celticCross.hopesAndFearsDesc"),
+          name: t("positions.celticCross.hopesAndFears"),
+          description: t("positions.celticCross.hopesAndFearsDesc"),
           x: 3,
           y: 1,
         },
         {
-          name: t("tarotSpread.positions.celticCross.finalOutcome"),
-          description: t("tarotSpread.positions.celticCross.finalOutcomeDesc"),
+          name: t("positions.celticCross.finalOutcome"),
+          description: t("positions.celticCross.finalOutcomeDesc"),
           x: 3,
           y: 0,
         },
       ],
       love: [
         {
-          name: t("tarotSpread.positions.love.you"),
-          description: t("tarotSpread.positions.love.youDesc"),
+          name: t("positions.love.you"),
+          description: t("positions.love.youDesc"),
           x: 0,
           y: 0,
         },
         {
-          name: t("tarotSpread.positions.love.partner"),
-          description: t("tarotSpread.positions.love.partnerDesc"),
+          name: t("positions.love.partner"),
+          description: t("positions.love.partnerDesc"),
           x: 2,
           y: 0,
         },
         {
-          name: t("tarotSpread.positions.love.relationship"),
-          description: t("tarotSpread.positions.love.relationshipDesc"),
+          name: t("positions.love.relationship"),
+          description: t("positions.love.relationshipDesc"),
           x: 1,
           y: 0,
         },
         {
-          name: t("tarotSpread.positions.love.obstacles"),
-          description: t("tarotSpread.positions.love.obstaclesDesc"),
+          name: t("positions.love.obstacles"),
+          description: t("positions.love.obstaclesDesc"),
           x: 1,
           y: -1,
         },
         {
-          name: t("tarotSpread.positions.love.potential"),
-          description: t("tarotSpread.positions.love.potentialDesc"),
+          name: t("positions.love.potential"),
+          description: t("positions.love.potentialDesc"),
           x: 1,
           y: 1,
         },
       ],
       career: [
         {
-          name: t("tarotSpread.positions.career.currentSituation"),
-          description: t("tarotSpread.positions.career.currentSituationDesc"),
+          name: t("positions.career.currentSituation"),
+          description: t("positions.career.currentSituationDesc"),
           x: 0,
           y: 0,
         },
         {
-          name: t("tarotSpread.positions.career.opportunities"),
-          description: t("tarotSpread.positions.career.opportunitiesDesc"),
+          name: t("positions.career.opportunities"),
+          description: t("positions.career.opportunitiesDesc"),
           x: 1,
           y: -1,
         },
         {
-          name: t("tarotSpread.positions.career.obstacles"),
-          description: t("tarotSpread.positions.career.obstaclesDesc"),
+          name: t("positions.career.obstacles"),
+          description: t("positions.career.obstaclesDesc"),
           x: 1,
           y: 1,
         },
         {
-          name: t("tarotSpread.positions.career.outcome"),
-          description: t("tarotSpread.positions.career.outcomeDesc"),
+          name: t("positions.career.outcome"),
+          description: t("positions.career.outcomeDesc"),
           x: 2,
           y: 0,
         },
       ],
     }),
-    [t]
+    [language]
   );
 
   const positions = spreadLayouts[spreadType] || [];
@@ -213,9 +398,7 @@ export const TarotSpreadComponent: React.FC<TarotSpreadProps> = ({
     // Simula geração de interpretação personalizada
     await new Promise((resolve) => setTimeout(resolve, 2000));
 
-    let fullInterpretation = `## ${t(
-      "tarotSpread.tarotReading"
-    )} - ${getSpreadName(spreadType)}\n\n`;
+    let fullInterpretation = `## ${t("tarotReading")} - ${getSpreadName(spreadType)}\n\n`;
 
     cards.forEach((card, index) => {
       const position = positions[index];
@@ -231,8 +414,8 @@ export const TarotSpreadComponent: React.FC<TarotSpreadProps> = ({
     });
 
     const generalInsightKey = getGeneralInsight(cards, userProfile);
-    fullInterpretation += `## ${t("tarotSpread.generalOverview")}\n\n${t(
-      "tarotSpread.insights.overviewText",
+    fullInterpretation += `## ${t("generalOverview")}\n\n${t(
+      "insights.overviewText",
       { insight: t(generalInsightKey) }
     )}`;
 
@@ -245,18 +428,18 @@ export const TarotSpreadComponent: React.FC<TarotSpreadProps> = ({
     if (interpretation) {
       onSaveReading(cards, interpretation);
       toast({
-        title: t("tarotSpread.readingSaved"),
-        description: t("tarotSpread.readingSavedDesc"),
+        title: t("readingSaved"),
+        description: t("readingSavedDesc"),
       });
     }
   };
 
   const getSpreadName = (type: string) => {
     const names = {
-      "three-card": t("tarot.history.spreadNames.threeCard"),
-      "celtic-cross": t("tarot.history.spreadNames.celticCross"),
-      love: t("tarot.history.spreadNames.love"),
-      career: t("tarot.history.spreadNames.career"),
+      "three-card": t("spreadNames.threeCard"),
+      "celtic-cross": t("spreadNames.celticCross"),
+      love: t("spreadNames.love"),
+      career: t("spreadNames.career"),
     };
     return names[type as keyof typeof names] || type;
   };
@@ -266,11 +449,11 @@ export const TarotSpreadComponent: React.FC<TarotSpreadProps> = ({
     const reversedCards = cards.filter((card) => card.isReversed).length;
 
     if (majorCards > cards.length / 2) {
-      return "tarotSpread.insights.greatTransformation";
+      return "insights.greatTransformation";
     } else if (reversedCards > cards.length / 2) {
-      return "tarotSpread.insights.innerReflection";
+      return "insights.innerReflection";
     } else {
-      return "tarotSpread.insights.gradualGrowth";
+      return "insights.gradualGrowth";
     }
   };
 
@@ -308,7 +491,7 @@ export const TarotSpreadComponent: React.FC<TarotSpreadProps> = ({
                             </div>
                             {card.isReversed && (
                               <Badge variant="outline" className="text-xs mb-1">
-                                {t("tarotSpread.reversed")}
+                                {t("reversed")}
                               </Badge>
                             )}
                             <RotateCcw
@@ -321,7 +504,7 @@ export const TarotSpreadComponent: React.FC<TarotSpreadProps> = ({
                           <>
                             <Eye className="w-6 h-6 text-muted-foreground mb-2" />
                             <div className="text-xs text-muted-foreground">
-                              {t("tarotSpread.tapToReveal")}
+                              {t("tapToReveal")}
                             </div>
                           </>
                         )}
@@ -382,7 +565,7 @@ export const TarotSpreadComponent: React.FC<TarotSpreadProps> = ({
                                   variant="outline"
                                   className="text-xs mb-1"
                                 >
-                                  {t("tarotSpread.reversedShort")}
+                                  {t("reversedShort")}
                                 </Badge>
                               )}
                               <RotateCcw
@@ -395,7 +578,7 @@ export const TarotSpreadComponent: React.FC<TarotSpreadProps> = ({
                             <>
                               <Eye className="w-4 h-4 text-muted-foreground mb-1" />
                               <div className="text-xs text-muted-foreground">
-                                {t("tarotSpread.tap")}
+                                {t("tap")}
                               </div>
                             </>
                           )}
@@ -439,7 +622,7 @@ export const TarotSpreadComponent: React.FC<TarotSpreadProps> = ({
                             </div>
                             {card.isReversed && (
                               <Badge variant="outline" className="text-xs mb-1">
-                                {t("tarotSpread.reversedShort")}
+                                {t("reversedShort")}
                               </Badge>
                             )}
                             <RotateCcw
@@ -452,7 +635,7 @@ export const TarotSpreadComponent: React.FC<TarotSpreadProps> = ({
                           <>
                             <Eye className="w-4 h-4 text-muted-foreground mb-1" />
                             <div className="text-xs text-muted-foreground">
-                              {t("tarotSpread.tap")}
+                              {t("tap")}
                             </div>
                           </>
                         )}
@@ -501,7 +684,7 @@ export const TarotSpreadComponent: React.FC<TarotSpreadProps> = ({
                                   variant="outline"
                                   className="text-xs mb-1"
                                 >
-                                  {t("tarotSpread.reversedShort")}
+                                  {t("reversedShort")}
                                 </Badge>
                               )}
                               <RotateCcw
@@ -514,7 +697,7 @@ export const TarotSpreadComponent: React.FC<TarotSpreadProps> = ({
                             <>
                               <Eye className="w-4 h-4 text-muted-foreground mb-1" />
                               <div className="text-xs text-muted-foreground">
-                                {t("tarotSpread.tap")}
+                                {t("tap")}
                               </div>
                             </>
                           )}
@@ -586,7 +769,7 @@ export const TarotSpreadComponent: React.FC<TarotSpreadProps> = ({
                             </div>
                             {card.isReversed && (
                               <Badge variant="outline" className="text-xs">
-                                {t("tarotSpread.reversed")}
+                                {t("reversed")}
                               </Badge>
                             )}
                             <RotateCcw
@@ -599,7 +782,7 @@ export const TarotSpreadComponent: React.FC<TarotSpreadProps> = ({
                           <>
                             <Eye className="w-6 h-6 text-muted-foreground mb-1" />
                             <div className="text-xs text-muted-foreground">
-                              {t("tarotSpread.clickToReveal")}
+                              {t("clickToReveal")}
                             </div>
                           </>
                         )}
@@ -632,12 +815,12 @@ export const TarotSpreadComponent: React.FC<TarotSpreadProps> = ({
               {isGeneratingInterpretation ? (
                 <>
                   <div className="w-4 h-4 mr-2 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
-                  {t("tarotSpread.interpreting")}
+                  {t("interpreting")}
                 </>
               ) : (
                 <>
                   <Eye className="w-4 h-4 mr-2" />
-                  {t("tarotSpread.generateInterpretation")}
+                  {t("generateInterpretation")}
                 </>
               )}
             </Button>
@@ -645,7 +828,7 @@ export const TarotSpreadComponent: React.FC<TarotSpreadProps> = ({
             {interpretation && (
               <Button onClick={saveReading} variant="outline">
                 <Save className="w-4 h-4 mr-2" />
-                {t("tarotSpread.saveReading")}
+                {t("saveReading")}
               </Button>
             )}
           </div>

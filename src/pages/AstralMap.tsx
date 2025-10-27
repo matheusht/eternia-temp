@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Star, Moon, Sun } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -8,12 +7,62 @@ import { useUserData } from "@/hooks/useUserData";
 import { getPersonalizedHoroscope } from "@/utils/horoscope";
 import { AppLayout } from "@/components/AppLayout";
 import { useTranslation } from "@/hooks/useTranslation";
+import { useLocation } from "react-router-dom";
 
 const AstralMap = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { profile } = useUserData();
   const { t } = useTranslation();
+  const location = useLocation();
+  const isPortuguese = location.pathname.startsWith("/pt");
+
+  // Direct translations for specific sections
+  const directTexts = {
+    en: {
+      yourAstrologicalData: "Your Astrological Data",
+      spiritualGoals: "Spiritual Goals",
+      goals: {
+        autoconhecimento: "Self-Knowledge",
+        amor: "Love",
+        carreira: "Career",
+        saude: "Health",
+        espiritualidade: "Spirituality",
+        abundancia: "Abundance",
+        relacionamentos: "Relationships",
+        proposito: "Life Purpose"
+      }
+    },
+    pt: {
+      yourAstrologicalData: "Seus Dados Astrológicos",
+      spiritualGoals: "Objetivos Espirituais",
+      goals: {
+        autoconhecimento: "Autoconhecimento",
+        amor: "Amor",
+        carreira: "Carreira",
+        saude: "Saúde",
+        espiritualidade: "Espiritualidade",
+        abundancia: "Abundância",
+        relacionamentos: "Relacionamentos",
+        proposito: "Propósito de Vida"
+      }
+    }
+  };
+
+  const getDirectText = (key: string): string => {
+    const lang = isPortuguese ? 'pt' : 'en';
+    const keys = key.split('.');
+    let value: any = directTexts[lang];
+
+    for (const k of keys) {
+      value = value?.[k];
+      if (value === undefined) {
+        return key;
+      }
+    }
+
+    return typeof value === 'string' ? value : key;
+  };
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -35,9 +84,9 @@ const AstralMap = () => {
     );
   }
 
-  // Get goal label from translations
+  // Get goal label from direct translations
   const getGoalLabel = (goalId: string): string => {
-    return t(`astralMap.goals.${goalId}`);
+    return getDirectText(`goals.${goalId}`);
   };
 
   const horoscopeData = getPersonalizedHoroscope(
@@ -45,9 +94,9 @@ const AstralMap = () => {
     profile.birth_time,
     profile.birth_location,
     profile.goal ||
-      (profile.goals && profile.goals.length > 0
-        ? profile.goals[0]
-        : "autoconhecimento")
+    (profile.goals && profile.goals.length > 0
+      ? profile.goals[0]
+      : "autoconhecimento")
   );
 
   const astralData = {
@@ -75,7 +124,7 @@ const AstralMap = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Star className="w-5 h-5 text-primary" />
-                  {t("astralMap.yourAstrologicalData")}
+                  {getDirectText("yourAstrologicalData")}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -101,11 +150,11 @@ const AstralMap = () => {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">
-                    {t("astralMap.spiritualGoals")}
+                    {getDirectText("spiritualGoals")}
                   </p>
                   <div className="space-y-1">
                     {profile.goals && profile.goals.length > 0 ? (
-                      profile.goals.map((goalId: string, index: number) => (
+                      profile.goals.map((goalId: string) => (
                         <p key={goalId} className="text-sm font-medium">
                           • {getGoalLabel(goalId)}
                         </p>

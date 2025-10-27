@@ -4,7 +4,7 @@ import { useTranslation } from "@/hooks/useTranslation";
 
 export const HoroscopeImportance = () => {
   const { t } = useTranslation();
-  
+
   const benefits = [
     {
       icon: Sun,
@@ -46,8 +46,8 @@ export const HoroscopeImportance = () => {
         {benefits.map((benefit, index) => {
           const IconComponent = benefit.icon;
           return (
-            <Card 
-              key={index} 
+            <Card
+              key={index}
               className="mystic-border bg-card/50 backdrop-blur-sm hover:shadow-mystic transition-all duration-300"
               style={{ animationDelay: `${index * 0.1}s` }}
             >

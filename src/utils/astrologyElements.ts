@@ -1,4 +1,4 @@
-import { getUtilTranslation, type Language } from '@/i18n/translations';
+type Language = 'en' | 'pt';
 
 export const getMoonPhase = (language: Language = 'en'): { phase: string; emoji: string; description: string } => {
   const today = new Date();
@@ -11,25 +11,40 @@ export const getMoonPhase = (language: Language = 'en'): { phase: string; emoji:
   const lunarCycle = 29.53;
   const phase = (dayOfYear % lunarCycle) / lunarCycle;
 
+  const moonPhases = {
+    en: {
+      newMoon: { name: "New Moon", description: "A time for new beginnings and setting intentions" },
+      waxingMoon: { name: "Waxing Moon", description: "A time for growth and building energy" },
+      fullMoon: { name: "Full Moon", description: "A time of culmination and heightened energy" },
+      waningMoon: { name: "Waning Moon", description: "A time for release and letting go" }
+    },
+    pt: {
+      newMoon: { name: "Lua Nova", description: "Um tempo para novos começos e definir intenções" },
+      waxingMoon: { name: "Lua Crescente", description: "Um tempo para crescimento e construção de energia" },
+      fullMoon: { name: "Lua Cheia", description: "Um tempo de culminação e energia elevada" },
+      waningMoon: { name: "Lua Minguante", description: "Um tempo para liberação e deixar ir" }
+    }
+  };
+
   if (phase < 0.125) return {
-    phase: getUtilTranslation(language, 'astrology.moonPhases.newMoon', 'name'),
+    phase: moonPhases[language].newMoon.name,
     emoji: "🌑",
-    description: getUtilTranslation(language, 'astrology.moonPhases.newMoon', 'description')
+    description: moonPhases[language].newMoon.description
   };
   if (phase < 0.375) return {
-    phase: getUtilTranslation(language, 'astrology.moonPhases.waxingMoon', 'name'),
+    phase: moonPhases[language].waxingMoon.name,
     emoji: "🌒",
-    description: getUtilTranslation(language, 'astrology.moonPhases.waxingMoon', 'description')
+    description: moonPhases[language].waxingMoon.description
   };
   if (phase < 0.625) return {
-    phase: getUtilTranslation(language, 'astrology.moonPhases.fullMoon', 'name'),
+    phase: moonPhases[language].fullMoon.name,
     emoji: "🌕",
-    description: getUtilTranslation(language, 'astrology.moonPhases.fullMoon', 'description')
+    description: moonPhases[language].fullMoon.description
   };
   return {
-    phase: getUtilTranslation(language, 'astrology.moonPhases.waningMoon', 'name'),
+    phase: moonPhases[language].waningMoon.name,
     emoji: "🌘",
-    description: getUtilTranslation(language, 'astrology.moonPhases.waningMoon', 'description')
+    description: moonPhases[language].waningMoon.description
   };
 };
 
@@ -37,45 +52,28 @@ export const getDailyPlanet = (language: Language = 'en'): { planet: string; emo
   const today = new Date();
   const dayOfWeek = today.getDay();
 
-  const planets = [
-    {
-      planet: getUtilTranslation(language, 'astrology.planets.sun', 'name'),
-      emoji: "☀️",
-      influence: getUtilTranslation(language, 'astrology.planets.sun', 'influence')
-    },
-    {
-      planet: getUtilTranslation(language, 'astrology.planets.moon', 'name'),
-      emoji: "🌙",
-      influence: getUtilTranslation(language, 'astrology.planets.moon', 'influence')
-    },
-    {
-      planet: getUtilTranslation(language, 'astrology.planets.mars', 'name'),
-      emoji: "♂️",
-      influence: getUtilTranslation(language, 'astrology.planets.mars', 'influence')
-    },
-    {
-      planet: getUtilTranslation(language, 'astrology.planets.mercury', 'name'),
-      emoji: "☿",
-      influence: getUtilTranslation(language, 'astrology.planets.mercury', 'influence')
-    },
-    {
-      planet: getUtilTranslation(language, 'astrology.planets.jupiter', 'name'),
-      emoji: "♃",
-      influence: getUtilTranslation(language, 'astrology.planets.jupiter', 'influence')
-    },
-    {
-      planet: getUtilTranslation(language, 'astrology.planets.venus', 'name'),
-      emoji: "♀️",
-      influence: getUtilTranslation(language, 'astrology.planets.venus', 'influence')
-    },
-    {
-      planet: getUtilTranslation(language, 'astrology.planets.saturn', 'name'),
-      emoji: "♄",
-      influence: getUtilTranslation(language, 'astrology.planets.saturn', 'influence')
-    }
-  ];
+  const planetData = {
+    en: [
+      { planet: "Sun", emoji: "☀️", influence: "Vitality and leadership energy" },
+      { planet: "Moon", emoji: "🌙", influence: "Intuition and emotional depth" },
+      { planet: "Mars", emoji: "♂️", influence: "Action and determination" },
+      { planet: "Mercury", emoji: "☿", influence: "Communication and mental agility" },
+      { planet: "Jupiter", emoji: "♃", influence: "Expansion and good fortune" },
+      { planet: "Venus", emoji: "♀️", influence: "Love and harmony" },
+      { planet: "Saturn", emoji: "♄", influence: "Discipline and structure" }
+    ],
+    pt: [
+      { planet: "Sol", emoji: "☀️", influence: "Vitalidade e energia de liderança" },
+      { planet: "Lua", emoji: "🌙", influence: "Intuição e profundidade emocional" },
+      { planet: "Marte", emoji: "♂️", influence: "Ação e determinação" },
+      { planet: "Mercúrio", emoji: "☿", influence: "Comunicação e agilidade mental" },
+      { planet: "Júpiter", emoji: "♃", influence: "Expansão e boa sorte" },
+      { planet: "Vênus", emoji: "♀️", influence: "Amor e harmonia" },
+      { planet: "Saturno", emoji: "♄", influence: "Disciplina e estrutura" }
+    ]
+  };
 
-  return planets[dayOfWeek];
+  return planetData[language][dayOfWeek];
 };
 
 export const getLuckyNumbers = (birthDate: string): number[] => {

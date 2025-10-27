@@ -7,24 +7,62 @@ import { Lock, Eye, EyeOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { z } from "zod";
-import { useTranslation } from "@/hooks/useTranslation";
+import { useLocation } from "react-router-dom";
 
-const passwordSchema = z
-  .object({
-    newPassword: z
-      .string()
-      .min(6, "Password must be at least 6 characters")
-      .max(100, "Password must be less than 100 characters"),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.newPassword === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"],
-  });
+
 
 export const PasswordChangeForm = () => {
   const { toast } = useToast();
-  const { t } = useTranslation();
+  const location = useLocation();
+  const isPortuguese = location.pathname.startsWith("/pt");
+  
+  // Direct translations
+  const texts = {
+    en: {
+      title: "Change Password",
+      currentPassword: "Current Password",
+      currentPasswordPlaceholder: "Enter your current password",
+      newPassword: "New Password",
+      newPasswordPlaceholder: "Enter your new password",
+      confirmPassword: "Confirm Password",
+      confirmPasswordPlaceholder: "Confirm your new password",
+      changePassword: "Change Password",
+      updating: "Updating...",
+      validationError: "Validation Error",
+      passwordUpdated: "Password Updated",
+      passwordUpdatedDesc: "Your password has been successfully changed.",
+      error: "Error",
+      errorDesc: "Failed to update password. Please try again.",
+      passwordMinLength: "Password must be at least 6 characters",
+      passwordMaxLength: "Password must be less than 100 characters",
+      passwordsDontMatch: "Passwords don't match"
+    },
+    pt: {
+      title: "Alterar Senha",
+      currentPassword: "Senha Atual",
+      currentPasswordPlaceholder: "Digite sua senha atual",
+      newPassword: "Nova Senha",
+      newPasswordPlaceholder: "Digite sua nova senha",
+      confirmPassword: "Confirmar Senha",
+      confirmPasswordPlaceholder: "Confirme sua nova senha",
+      changePassword: "Alterar Senha",
+      updating: "Atualizando...",
+      validationError: "Erro de Validação",
+      passwordUpdated: "Senha Atualizada",
+      passwordUpdatedDesc: "Sua senha foi alterada com sucesso.",
+      error: "Erro",
+      errorDesc: "Falha ao atualizar senha. Tente novamente.",
+      passwordMinLength: "A senha deve ter pelo menos 6 caracteres",
+      passwordMaxLength: "A senha deve ter menos de 100 caracteres",
+      passwordsDontMatch: "As senhas não coincidem"
+    }
+  };
+
+  const t = (key: string): string => {
+    const lang = isPortuguese ? 'pt' : 'en';
+    return texts[lang][key as keyof typeof texts.en] || key;
+  };
+
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -34,6 +72,19 @@ export const PasswordChangeForm = () => {
     confirm: false,
   });
   const [loading, setLoading] = useState(false);
+
+  const passwordSchema = z
+    .object({
+      newPassword: z
+        .string()
+        .min(6, t("passwordMinLength"))
+        .max(100, t("passwordMaxLength")),
+      confirmPassword: z.string(),
+    })
+    .refine((data) => data.newPassword === data.confirmPassword, {
+      message: t("passwordsDontMatch"),
+      path: ["confirmPassword"],
+    });
 
   const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,7 +100,7 @@ export const PasswordChangeForm = () => {
       if (!validationResult.success) {
         const error = validationResult.error.errors[0];
         toast({
-          title: "Validation Error",
+          title: t("validationError"),
           description: error.message,
           variant: "destructive",
         });
@@ -64,8 +115,8 @@ export const PasswordChangeForm = () => {
       if (error) throw error;
 
       toast({
-        title: "Password Updated",
-        description: "Your password has been successfully changed.",
+        title: t("passwordUpdated"),
+        description: t("passwordUpdatedDesc"),
       });
 
       // Clear form
@@ -74,9 +125,8 @@ export const PasswordChangeForm = () => {
       setConfirmPassword("");
     } catch (error: any) {
       toast({
-        title: "Error",
-        description:
-          error.message || "Failed to update password. Please try again.",
+        title: t("error"),
+        description: error.message || t("errorDesc"),
         variant: "destructive",
       });
     } finally {
@@ -96,14 +146,14 @@ export const PasswordChangeForm = () => {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Lock className="w-5 h-5 text-primary" />
-          {t("passwordChange.title")}
+          {t("title")}
         </CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handlePasswordChange} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="current-password">
-              {t("passwordChange.currentPassword")}
+              {t("currentPassword")}
             </Label>
             <div className="relative">
               <Input
@@ -112,7 +162,7 @@ export const PasswordChangeForm = () => {
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
                 required
-                placeholder={t("passwordChange.currentPasswordPlaceholder")}
+                placeholder={t("currentPasswordPlaceholder")}
                 className="pr-10"
               />
               <button
@@ -131,7 +181,7 @@ export const PasswordChangeForm = () => {
 
           <div className="space-y-2">
             <Label htmlFor="new-password">
-              {t("passwordChange.newPassword")}
+              {t("newPassword")}
             </Label>
             <div className="relative">
               <Input
@@ -140,7 +190,7 @@ export const PasswordChangeForm = () => {
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 required
-                placeholder={t("passwordChange.newPasswordPlaceholder")}
+                placeholder={t("newPasswordPlaceholder")}
                 className="pr-10"
               />
               <button
@@ -159,7 +209,7 @@ export const PasswordChangeForm = () => {
 
           <div className="space-y-2">
             <Label htmlFor="confirm-password">
-              {t("passwordChange.confirmPassword")}
+              {t("confirmPassword")}
             </Label>
             <div className="relative">
               <Input
@@ -168,7 +218,7 @@ export const PasswordChangeForm = () => {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
-                placeholder={t("passwordChange.confirmPasswordPlaceholder")}
+                placeholder={t("confirmPasswordPlaceholder")}
                 className="pr-10"
               />
               <button
@@ -192,9 +242,7 @@ export const PasswordChangeForm = () => {
             }
             className="w-full"
           >
-            {loading
-              ? t("passwordChange.updating")
-              : t("passwordChange.changePassword")}
+            {loading ? t("updating") : t("changePassword")}
           </Button>
         </form>
       </CardContent>

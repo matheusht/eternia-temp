@@ -3,7 +3,7 @@ import { EterniaSidebar } from "@/components/EterniaSidebar";
 import { Menu, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
-import { useTranslation } from "@/hooks/useTranslation";
+import { useLocation } from "react-router-dom";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -11,7 +11,11 @@ interface AppLayoutProps {
 
 export function AppLayout({ children }: AppLayoutProps) {
   const { signOut } = useAuth();
-  const { t } = useTranslation();
+  const location = useLocation();
+  const isPortuguese = location.pathname.startsWith("/pt");
+
+  // Direct translation for signOut text
+  const signOutText = isPortuguese ? "Sair" : "Sign Out";
 
   return (
     <SidebarProvider>
@@ -35,7 +39,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                 className="text-foreground/70 hover:text-foreground hover:bg-primary/10"
               >
                 <LogOut className="h-4 w-4 mr-2" />
-                {t("common.signOut")}
+                {signOutText}
               </Button>
             </div>
           </header>
