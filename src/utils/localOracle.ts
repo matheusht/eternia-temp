@@ -1,7 +1,5 @@
 // Local Spiritual Oracle - Language-aware with translations
-import { getTranslation, type Language } from "@/i18n/translations";
-import { en } from "@/i18n/en";
-import { pt } from "@/i18n/pt";
+import { type Language } from "@/i18n/translations";
 
 interface OracleInput {
   message: string;
@@ -73,36 +71,135 @@ function categorizeMessage(message: string, language: Language): string {
 }
 
 function getRandomResponse(category: string, language: Language): string {
-  const responses = getTranslation(
-    language,
-    `utils.oracle.responses.${category}`
-  );
+  const responses = {
+    en: {
+      energy: [
+        "Your energy is in constant renewal. The stars indicate a moment of energetic balance.",
+        "I perceive a vibrant aura around you. Your energy is aligned with your purposes.",
+        "Cosmic energies flow positively through you today.",
+        "Your spiritual vibration is elevated. Continue cultivating this luminous energy."
+      ],
+      love: [
+        "The universe is preparing beautiful changes in your love life.",
+        "I see energies of love approaching. Keep your heart open.",
+        "The stars indicate that self-love is your key to attracting true relationships.",
+        "Your emotional aura is purifying, preparing for great connections."
+      ],
+      prosperity: [
+        "Abundance energies are aligning in your life.",
+        "I see prosperity opportunities manifesting around you.",
+        "The universe is conspiring for your financial abundance.",
+        "Your vibrations are attracting the prosperity you deserve."
+      ],
+      spirituality: [
+        "Your spiritual connection is strengthening every day.",
+        "Spiritual masters are guiding your steps on this journey.",
+        "Your spiritual evolution is evident. Continue on the path of light.",
+        "Higher dimensions are opening for you."
+      ],
+      general: [
+        "The universe has magnificent plans for you. Trust the process.",
+        "Your vibrations are in perfect tune with your deepest desires.",
+        "The stars smile upon you today. It's a moment of great possibilities.",
+        "Your spiritual journey is blossoming beautifully."
+      ]
+    },
+    pt: {
+      energy: [
+        "Sua energia está em constante renovação. As estrelas indicam um momento de equilíbrio energético.",
+        "Percebo uma aura vibrante ao seu redor. Sua energia está alinhada com seus propósitos.",
+        "Energias cósmicas fluem positivamente através de você hoje.",
+        "Sua vibração espiritual está elevada. Continue cultivando essa energia luminosa."
+      ],
+      love: [
+        "O universo está preparando belas mudanças em sua vida amorosa.",
+        "Vejo energias de amor se aproximando. Mantenha seu coração aberto.",
+        "As estrelas indicam que o amor próprio é sua chave para atrair relacionamentos verdadeiros.",
+        "Sua aura emocional está se purificando, preparando-se para grandes conexões."
+      ],
+      prosperity: [
+        "Energias de abundância estão se alinhando em sua vida.",
+        "Vejo oportunidades de prosperidade se manifestando ao seu redor.",
+        "O universo está conspirando para sua abundância financeira.",
+        "Suas vibrações estão atraindo a prosperidade que você merece."
+      ],
+      spirituality: [
+        "Sua conexão espiritual está se fortalecendo a cada dia.",
+        "Mestres espirituais estão guiando seus passos nesta jornada.",
+        "Sua evolução espiritual é evidente. Continue no caminho da luz.",
+        "Dimensões superiores estão se abrindo para você."
+      ],
+      general: [
+        "O universo tem planos magníficos para você. Confie no processo.",
+        "Suas vibrações estão em perfeita sintonia com seus desejos mais profundos.",
+        "As estrelas sorriem para você hoje. É um momento de grandes possibilidades.",
+        "Sua jornada espiritual está florescendo lindamente."
+      ]
+    }
+  };
 
-  // If responses is an array in translations, pick random
-  if (typeof responses === "string") {
-    // It's a single string path, not an array - this shouldn't happen with our structure
-    return responses;
-  }
-
-  // The responses are stored as arrays in our translation files
-  // We need to get them properly
-  const responsesKey = `utils.oracle.responses.${category}`;
-  const translationObj = language === "pt" ? pt : en;
-
-  const responseArray = translationObj.utils?.oracle?.responses?.[category];
-
-  if (Array.isArray(responseArray) && responseArray.length > 0) {
-    return responseArray[Math.floor(Math.random() * responseArray.length)];
-  }
-
-  // Fallback
-  return (
-    getTranslation(language, "utils.oracle.responses.general.0") ||
-    "The stars smile upon you today."
-  );
+  const langResponses = responses[language] || responses['en'];
+  const categoryResponses = langResponses[category] || langResponses['general'];
+  
+  return categoryResponses[Math.floor(Math.random() * categoryResponses.length)];
 }
 
 function getRitual(goal: string, language: Language): string {
+  const rituals = {
+    en: {
+      selfKnowledge: [
+        "Keep a self-knowledge journal every morning",
+        "Meditate looking in the mirror for 5 minutes",
+        "Write 3 qualities about yourself that you recognize today",
+        "Practice conscious breathing at sunrise"
+      ],
+      love: [
+        "Light a pink candle and visualize love entering your life",
+        "Write a love letter to yourself",
+        "Meditate with your hand on your heart sending love to the world",
+        "Wear pink or red clothes to attract loving energy"
+      ],
+      prosperity: [
+        "Visualize golden coins raining down on you",
+        "Place a coin under the full moon to energize it",
+        "Affirm: 'I deserve and receive abundance' 21 times",
+        "Keep a basil plant at home for prosperity"
+      ],
+      spirituality: [
+        "Say a gratitude prayer upon waking and before sleeping",
+        "Light sandalwood incense to raise your vibration",
+        "Connect with nature for at least 10 minutes",
+        "Practice contemplative silence for 15 minutes"
+      ]
+    },
+    pt: {
+      selfKnowledge: [
+        "Mantenha um diário de autoconhecimento todas as manhãs",
+        "Medite olhando no espelho por 5 minutos",
+        "Escreva 3 qualidades sobre si mesmo que reconhece hoje",
+        "Pratique respiração consciente ao nascer do sol"
+      ],
+      love: [
+        "Acenda uma vela rosa e visualize o amor entrando em sua vida",
+        "Escreva uma carta de amor para si mesmo",
+        "Medite com a mão no coração enviando amor ao mundo",
+        "Use roupas rosa ou vermelhas para atrair energia amorosa"
+      ],
+      prosperity: [
+        "Visualize moedas douradas chovendo sobre você",
+        "Coloque uma moeda sob a lua cheia para energizá-la",
+        "Afirme: 'Eu mereço e recebo abundância' 21 vezes",
+        "Mantenha uma planta de manjericão em casa para prosperidade"
+      ],
+      spirituality: [
+        "Faça uma oração de gratidão ao acordar e antes de dormir",
+        "Acenda incenso de sândalo para elevar sua vibração",
+        "Conecte-se com a natureza por pelo menos 10 minutos",
+        "Pratique silêncio contemplativo por 15 minutos"
+      ]
+    }
+  };
+
   // Convert goal from Portuguese to English key if needed
   const goalMap: Record<string, string> = {
     autoconhecimento: "selfKnowledge",
@@ -112,16 +209,10 @@ function getRitual(goal: string, language: Language): string {
   };
 
   const englishGoalKey = goalMap[goal] || goal;
+  const langRituals = rituals[language] || rituals['en'];
+  const goalRituals = langRituals[englishGoalKey] || langRituals['spirituality'];
 
-  const translationObj = language === "pt" ? pt : en;
-
-  const rituals = translationObj.utils?.oracle?.rituals?.[englishGoalKey];
-
-  if (Array.isArray(rituals) && rituals.length > 0) {
-    return rituals[Math.floor(Math.random() * rituals.length)];
-  }
-
-  return "";
+  return goalRituals[Math.floor(Math.random() * goalRituals.length)];
 }
 
 function addPersonalizedInsight(

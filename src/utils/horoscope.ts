@@ -19,18 +19,18 @@ export const getPersonalizedHoroscope = (
   const parts = birthDate.split('-');
   const month = parseInt(parts[1]);
   const day = parseInt(parts[2]);
-  
+
   // Determine zodiac sign
   const sign = getZodiacSignInternal(month, day);
-  
+
   // Generate personalized message based on sign and goal
-  const personalizedMessage = generatePersonalizedMessage(sign, goal);
-  
+  const personalizedMessage = generatePersonalizedMessage(sign, goal, language);
+
   // Get daily elements based on sign and current cosmic energy
   const luckyElement = getLuckyElement(sign, language);
   const energyColor = getEnergyColor(sign, goal, language);
   const spiritualFocus = getSpiritualFocus(sign, goal, language);
-  
+
   return {
     sign,
     personalizedMessage,
@@ -65,287 +65,291 @@ const getZodiacSignInternal = (month: number, day: number): string => {
   return "Pisces";
 };
 
-const generatePersonalizedMessage = (sign: string, goal: string): string => {
-  const today = new Date();
-  const messages: Record<string, Record<string, string[]>> = {
-    "Aries": {
-      "self-knowledge": [
-        "Your Aries energy propels you to discover new aspects of yourself. Today is a day to look inward with courage.",
-        "The fire that burns within you reveals deep truths. Allow yourself to know your warrior essence.",
-        "Your natural initiative today guides you to an important discovery about your hidden talents."
-      ],
-      "love": [
-        "Your ardent heart is ready for new beginnings in love. Open yourself to authentic connections.",
-        "Mars' energy favors relationships based on true passion. Be yourself.",
-        "Today is the day to express your feelings with the honesty typical of Aries."
-      ],
-      "prosperity": [
-        "Your Aries determination can open doors to new financial opportunities. Act with confidence.",
-        "The universe conspires in favor of your ambitious projects. It's time to take the first step.",
-        "Your natural leadership attracts abundance. Trust in your ability to manifest prosperity."
-      ],
-      "spirituality": [
-        "Your spiritual journey gains momentum through conscious action. Practice meditation in movement.",
-        "The fire element connects you with transformative energies. Seek practices that elevate your vibration.",
-        "Your pioneering spirituality opens unique paths of connection with the divine."
-      ]
+const generatePersonalizedMessage = (sign: string, goal: string, language: Language = 'en'): string => {
+  const messages: Record<string, Record<string, Record<string, string[]>>> = {
+    en: {
+      "Aries": {
+        "selfKnowledge": [
+          "Your Aries energy propels you to discover new aspects of yourself. Today is a day to look inward with courage.",
+          "The fire that burns within you reveals deep truths. Allow yourself to know your warrior essence.",
+          "Your natural initiative today guides you to an important discovery about your hidden talents."
+        ],
+        "love": [
+          "Your ardent heart is ready for new beginnings in love. Open yourself to authentic connections.",
+          "Mars' energy favors relationships based on true passion. Be yourself.",
+          "Today is the day to express your feelings with the honesty typical of Aries."
+        ],
+        "prosperity": [
+          "Your Aries determination can open doors to new financial opportunities. Act with confidence.",
+          "The universe conspires in favor of your ambitious projects. It's time to take the first step.",
+          "Your natural leadership attracts abundance. Trust in your ability to manifest prosperity."
+        ],
+        "spirituality": [
+          "Your spiritual journey gains momentum through conscious action. Practice meditation in movement.",
+          "The fire element connects you with transformative energies. Seek practices that elevate your vibration.",
+          "Your pioneering spirituality opens unique paths of connection with the divine."
+        ]
+      },
+      "Taurus": {
+        "selfKnowledge": [
+          "Your Taurus nature invites deep reflection on your essential values. Connect with your inner truth.",
+          "The stability you seek begins within you. Explore your emotional roots with patience.",
+          "Today is a day to honor your sensitivity and discover the strength that resides in your gentleness."
+        ],
+        "love": [
+          "Venus blesses your relationships with harmony and beauty. Cultivate lasting and true connections.",
+          "Your capacity to love deeply is a rare gift. Allow yourself to be vulnerable today.",
+          "Love flourishes when you allow yourself to be authentic. Express your feelings with sincerity."
+        ],
+        "prosperity": [
+          "Your Taurus persistence is about to bear fruit. Continue building your dreams with dedication.",
+          "Abundance comes through consistent work and patience. Trust the process.",
+          "Today is favorable for financial decisions based on solid planning and intuition."
+        ],
+        "spirituality": [
+          "Your connection with Earth offers ancestral wisdom. Practice rituals that honor nature.",
+          "Taurus spirituality flourishes in simplicity and gratitude for small things.",
+          "Seek the sacred in everyday beauty. Every moment can be a prayer."
+        ]
+      },
+      "Gemini": {
+        "selfKnowledge": [
+          "Your Gemini versatility reveals multiple facets of your personality. Explore them all without judgment.",
+          "Curiosity is your superpower. Today, allow yourself to learn something new about yourself.",
+          "Your brilliant mind can discover unexpected connections between different aspects of your life."
+        ],
+        "love": [
+          "Communication is the key to your relationships today. Express yourself clearly and listen with your heart.",
+          "Your social nature attracts interesting people. Be open to conversations that can change your life.",
+          "Gemini love flourishes in the exchange of ideas and mutual discovery. Share your thoughts."
+        ],
+        "prosperity": [
+          "Your communication skills can open unexpected doors today. Use your words wisely.",
+          "Diversification is favorable. Consider multiple income sources or varied investments.",
+          "Your adaptability is a competitive advantage. Take advantage of the changes that arise."
+        ],
+        "spirituality": [
+          "Your spiritual journey is enriched through dialogue and exchange of experiences with others.",
+          "Gemini spirituality finds the divine in diversity and connection between all things.",
+          "Practice meditations that integrate mind and spirit. Your intellect is a sacred tool."
+        ]
+      },
+      "Cancer": {
+        "selfKnowledge": [
+          "Your emotions are your best counselors today. Trust in the wisdom of your Cancer heart.",
+          "Introspection reveals treasures hidden in your memories and past experiences.",
+          "Your sensitivity is a strength, not a weakness. Honor your empathetic nature."
+        ],
+        "love": [
+          "Your capacity to nurture and care is a gift for those you love. Express your affection today.",
+          "The Moon favors relationships based on emotional security and mutual trust.",
+          "Your protective and loving instinct creates deep bonds. Allow yourself to be loved in the same way."
+        ],
+        "prosperity": [
+          "Your Cancer intuition can guide you to sound financial decisions. Trust your hunches.",
+          "Investments in family, home, or lasting goods are favored today.",
+          "Your ability to save and preserve resources is a valuable skill. Use it wisely."
+        ],
+        "spirituality": [
+          "Cancer spirituality connects with family traditions and ancestral wisdom.",
+          "Practice rituals that honor your ancestors and strengthen your spiritual roots.",
+          "Your home is your temple. Create a sacred space where you can connect with the divine."
+        ]
+      },
+      "Leo": {
+        "selfKnowledge": [
+          "Your Leo brilliance is unique in the universe. Today is a day to recognize and celebrate your special talents.",
+          "The generosity of your heart reveals the nobility of your soul. Allow yourself to shine authentically.",
+          "Your creativity is a divine expression. Use it to know yourself more deeply."
+        ],
+        "love": [
+          "Your Leo heart loves with passion and grandeur. Today is a day to express your feelings with courage.",
+          "The Sun favors relationships where you can be completely yourself, without masks.",
+          "Your loyalty and generosity in love inspire and transform those around you."
+        ],
+        "prosperity": [
+          "Your natural leadership attracts growth opportunities. Take command of your projects.",
+          "Leo confidence can open doors that seemed impossible. Believe in your potential.",
+          "Investments in your image, education, or talents can yield unexpected returns."
+        ],
+        "spirituality": [
+          "Your spirituality shines through creative expression and celebration of life.",
+          "The divine manifests in you through your ability to inspire and illuminate others.",
+          "Practice solar rituals that connect you with your inner strength and life purpose."
+        ]
+      },
+      "Virgo": {
+        "selfKnowledge": [
+          "Your Virgo precision reveals important details about your true nature. Observe carefully.",
+          "The perfection you seek in the outer world begins with loving acceptance of yourself.",
+          "Your analytical ability can discover hidden patterns in your behavior and emotions."
+        ],
+        "love": [
+          "Your love is expressed through care and attention to detail. Small gestures have great power today.",
+          "The purity of your feelings deeply touches those who can see beyond your modesty.",
+          "Relationships based on mutual respect and joint growth are favored."
+        ],
+        "prosperity": [
+          "Your organization and meticulous planning are about to yield concrete results.",
+          "Virgo prosperity comes through dedicated work and continuous improvement.",
+          "Today is favorable for reviewing finances and making precise adjustments to your investments."
+        ],
+        "spirituality": [
+          "Your spiritual journey develops through dedicated service and pursuit of inner purity.",
+          "Virgo spirituality finds the sacred in simplicity and daily devotion.",
+          "Practice meditations that purify your mind and align your thoughts with elevated purposes."
+        ]
+      }
     },
-    "Taurus": {
-      "self-knowledge": [
-        "Your Taurus nature invites deep reflection on your essential values. Connect with your inner truth.",
-        "The stability you seek begins within you. Explore your emotional roots with patience.",
-        "Today is a day to honor your sensitivity and discover the strength that resides in your gentleness."
-      ],
-      "love": [
-        "Venus blesses your relationships with harmony and beauty. Cultivate lasting and true connections.",
-        "Your capacity to love deeply is a rare gift. Allow yourself to be vulnerable today.",
-        "Love flourishes when you allow yourself to be authentic. Express your feelings with sincerity."
-      ],
-      "prosperity": [
-        "Your Taurus persistence is about to bear fruit. Continue building your dreams with dedication.",
-        "Abundance comes through consistent work and patience. Trust the process.",
-        "Today is favorable for financial decisions based on solid planning and intuition."
-      ],
-      "spirituality": [
-        "Your connection with Earth offers ancestral wisdom. Practice rituals that honor nature.",
-        "Taurus spirituality flourishes in simplicity and gratitude for small things.",
-        "Seek the sacred in everyday beauty. Every moment can be a prayer."
-      ]
-    },
-    "Gemini": {
-      "self-knowledge": [
-        "Your Gemini versatility reveals multiple facets of your personality. Explore them all without judgment.",
-        "Curiosity is your superpower. Today, allow yourself to learn something new about yourself.",
-        "Your brilliant mind can discover unexpected connections between different aspects of your life."
-      ],
-      "love": [
-        "Communication is the key to your relationships today. Express yourself clearly and listen with your heart.",
-        "Your social nature attracts interesting people. Be open to conversations that can change your life.",
-        "Gemini love flourishes in the exchange of ideas and mutual discovery. Share your thoughts."
-      ],
-      "prosperity": [
-        "Your communication skills can open unexpected doors today. Use your words wisely.",
-        "Diversification is favorable. Consider multiple income sources or varied investments.",
-        "Your adaptability is a competitive advantage. Take advantage of the changes that arise."
-      ],
-      "spirituality": [
-        "Your spiritual journey is enriched through dialogue and exchange of experiences with others.",
-        "Gemini spirituality finds the divine in diversity and connection between all things.",
-        "Practice meditations that integrate mind and spirit. Your intellect is a sacred tool."
-      ]
-    },
-    "Cancer": {
-      "self-knowledge": [
-        "Your emotions are your best counselors today. Trust in the wisdom of your Cancer heart.",
-        "Introspection reveals treasures hidden in your memories and past experiences.",
-        "Your sensitivity is a strength, not a weakness. Honor your empathetic nature."
-      ],
-      "love": [
-        "Your capacity to nurture and care is a gift for those you love. Express your affection today.",
-        "The Moon favors relationships based on emotional security and mutual trust.",
-        "Your protective and loving instinct creates deep bonds. Allow yourself to be loved in the same way."
-      ],
-      "prosperity": [
-        "Your Cancer intuition can guide you to sound financial decisions. Trust your hunches.",
-        "Investments in family, home, or lasting goods are favored today.",
-        "Your ability to save and preserve resources is a valuable skill. Use it wisely."
-      ],
-      "spirituality": [
-        "Cancer spirituality connects with family traditions and ancestral wisdom.",
-        "Practice rituals that honor your ancestors and strengthen your spiritual roots.",
-        "Your home is your temple. Create a sacred space where you can connect with the divine."
-      ]
-    },
-    "Leo": {
-      "self-knowledge": [
-        "Your Leo brilliance is unique in the universe. Today is a day to recognize and celebrate your special talents.",
-        "The generosity of your heart reveals the nobility of your soul. Allow yourself to shine authentically.",
-        "Your creativity is a divine expression. Use it to know yourself more deeply."
-      ],
-      "love": [
-        "Your Leo heart loves with passion and grandeur. Today is a day to express your feelings with courage.",
-        "The Sun favors relationships where you can be completely yourself, without masks.",
-        "Your loyalty and generosity in love inspire and transform those around you."
-      ],
-      "prosperity": [
-        "Your natural leadership attracts growth opportunities. Take command of your projects.",
-        "Leo confidence can open doors that seemed impossible. Believe in your potential.",
-        "Investments in your image, education, or talents can yield unexpected returns."
-      ],
-      "spirituality": [
-        "Your spirituality shines through creative expression and celebration of life.",
-        "The divine manifests in you through your ability to inspire and illuminate others.",
-        "Practice solar rituals that connect you with your inner strength and life purpose."
-      ]
-    },
-    "Virgo": {
-      "self-knowledge": [
-        "Your Virgo precision reveals important details about your true nature. Observe carefully.",
-        "The perfection you seek in the outer world begins with loving acceptance of yourself.",
-        "Your analytical ability can discover hidden patterns in your behavior and emotions."
-      ],
-      "love": [
-        "Your love is expressed through care and attention to detail. Small gestures have great power today.",
-        "The purity of your feelings deeply touches those who can see beyond your modesty.",
-        "Relationships based on mutual respect and joint growth are favored."
-      ],
-      "prosperity": [
-        "Your organization and meticulous planning are about to yield concrete results.",
-        "Virgo prosperity comes through dedicated work and continuous improvement.",
-        "Today is favorable for reviewing finances and making precise adjustments to your investments."
-      ],
-      "spirituality": [
-        "Your spiritual journey develops through dedicated service and pursuit of inner purity.",
-        "Virgo spirituality finds the sacred in simplicity and daily devotion.",
-        "Practice meditations that purify your mind and align your thoughts with elevated purposes."
-      ]
-    },
-    "Libra": {
-      "self-knowledge": [
-        "Your search for Libra balance reveals the wisdom of honoring all parts of yourself.",
-        "The harmony you seek in the outer world reflects your need for inner peace.",
-        "Your ability to see multiple perspectives is a gift that brings deep understanding."
-      ],
-      "love": [
-        "Venus blesses your relationships with beauty, harmony, and mutual understanding today.",
-        "Your diplomatic nature creates bridges of love where others see only differences.",
-        "Libra love flourishes in balanced partnership and respect for the other's individuality."
-      ],
-      "prosperity": [
-        "Partnerships and collaborations can bring unexpected financial opportunities today.",
-        "Your ability to negotiate and find balanced solutions is a valuable advantage.",
-        "Investments in art, beauty, or relationships can have surprising returns."
-      ],
-      "spirituality": [
-        "Your spirituality manifests through the pursuit of justice and universal harmony.",
-        "The divine reveals itself in the beauty you find and create in the world around you.",
-        "Practice meditations that balance your energies and connect you with inner peace."
-      ]
-    },
-    "Scorpio": {
-      "self-knowledge": [
-        "Your Scorpio intensity invites deep dives into unexplored territories of your soul.",
-        "Transformation is your specialty. Today, allow yourself to die to what no longer serves.",
-        "Your powerful instincts reveal truths that others prefer to ignore. Trust your perception."
-      ],
-      "love": [
-        "Your Scorpio passion has the power to transform and regenerate relationships deeply.",
-        "True love requires courage to face the shadows. You have that courage.",
-        "Pluto favors intense and transformative connections that change life forever."
-      ],
-      "prosperity": [
-        "Your ability to investigate and discover hidden opportunities can bring unexpected gains.",
-        "Deep transformations in your career or business may be approaching.",
-        "Investments in natural resources, therapies, or investigation may be especially favorable."
-      ],
-      "spirituality": [
-        "Your spiritual journey passes through inner alchemy and transmutation of shadows into light.",
-        "Scorpio spirituality embraces deep mysteries and hidden truths of existence.",
-        "Practice purification and rebirth rituals that honor your transformative nature."
-      ]
-    },
-    "Sagittarius": {
-      "self-knowledge": [
-        "Your Sagittarius soul yearns for infinite horizons of knowledge and experience.",
-        "The truth you seek in the outer world is a reflection of the wisdom growing within you.",
-        "Your adventurous nature reveals courageous and optimistic aspects of your personality."
-      ],
-      "love": [
-        "Your Sagittarius heart loves with freedom and adventure. Relationships that expand your horizons are favored.",
-        "Jupiter blesses connections based on mutual growth and joint exploration of life.",
-        "Your honesty and optimism inspire and elevate those lucky enough to love you."
-      ],
-      "prosperity": [
-        "International or educational expansion opportunities can bring unexpected prosperity.",
-        "Your broad vision and natural optimism attract reliable investors and partners.",
-        "Business adventures or investments in education can yield long-term results."
-      ],
-      "spirituality": [
-        "Your spiritual quest expands through diverse philosophies and universal traditions.",
-        "Sagittarius spirituality finds the divine in the wisdom of all cultures and beliefs.",
-        "Practice meditations that expand your consciousness and connect you with universal truth."
-      ]
-    },
-    "Capricorn": {
-      "self-knowledge": [
-        "Your Capricorn determination builds mountains of wisdom through patient experience.",
-        "The maturity of your soul reveals itself in the ability to transform challenges into achievements.",
-        "Your responsibility and discipline are reflections of your inner strength and elevated purpose."
-      ],
-      "love": [
-        "Your Capricorn love is solid as a mountain and reliable as the seasons.",
-        "Saturn favors relationships based on genuine commitment and mutual growth.",
-        "Your loyalty and dedication create secure foundations where true love can flourish."
-      ],
-      "prosperity": [
-        "Your strategic planning and persistence are building a prosperous and stable future.",
-        "The natural authority and competence you demonstrate attract important opportunities.",
-        "Long-term investments and wealth building are especially favored today."
-      ],
-      "spirituality": [
-        "Your spiritual journey develops through discipline, structure, and constant dedication.",
-        "Capricorn spirituality honors ancestral traditions and the wisdom of masters.",
-        "Practice rituals that connect you with your spiritual lineage and life purpose."
-      ]
-    },
-    "Aquarius": {
-      "self-knowledge": [
-        "Your Aquarius originality reveals unique and innovative aspects of your personality.",
-        "The freedom you seek in the outer world reflects your need for inner authenticity.",
-        "Your futuristic vision connects you with potentials not yet manifested by humanity."
-      ],
-      "love": [
-        "Your Aquarius heart loves with independence and respect for the other's individuality.",
-        "Uranus favors unconventional relationships based on genuine friendship and mutual freedom.",
-        "Your ability to love all humanity is expressed through unique and special connections."
-      ],
-      "prosperity": [
-        "Technological innovations and revolutionary ideas can bring unique financial opportunities.",
-        "Your ability to see the future before others is a valuable competitive advantage.",
-        "Investments in technology, social causes, or humanitarian movements are favored."
-      ],
-      "spirituality": [
-        "Your Aquarius spirituality connects you with collective consciousness and humanity's good.",
-        "The divine manifests through your ability to dream of a better and more just world.",
-        "Practice meditations that expand your planetary and cosmic consciousness."
-      ]
-    },
-    "Pisces": {
-      "self-knowledge": [
-        "Your Pisces sensitivity navigates the deep oceans of the human soul with intuitive wisdom.",
-        "The compassion you feel for the world reflects the sacred connection between all beings.",
-        "Your fertile imagination is a bridge between the material world and spiritual dimensions."
-      ],
-      "love": [
-        "Your Pisces love flows like pure water, healing and nurturing everything it touches.",
-        "Neptune favors relationships that transcend the physical and connect through the soul.",
-        "Your capacity for unconditional love creates miracles in the hearts of those around you."
-      ],
-      "prosperity": [
-        "Your Pisces intuition can guide you to investments that flow like water toward abundance.",
-        "Creative and compassionate projects can bring unexpected financial returns.",
-        "Trust your dreams and visions; they contain keys to material prosperity."
-      ],
-      "spirituality": [
-        "Your Pisces spirituality dissolves the barriers between you and universal consciousness.",
-        "You are a channel for divine love and healing. Use this gift to serve others.",
-        "Practice rituals that connect you with water energy and lunar cycles."
-      ]
+    pt: {
+      "Aries": {
+        "selfKnowledge": [
+          "Sua energia ariana o impulsiona a descobrir novos aspectos de si mesmo. Hoje é um dia para olhar para dentro com coragem.",
+          "O fogo que queima dentro de você revela verdades profundas. Permita-se conhecer sua essência guerreira.",
+          "Sua iniciativa natural hoje o guia a uma descoberta importante sobre seus talentos ocultos."
+        ],
+        "love": [
+          "Seu coração ardente está pronto para novos começos no amor. Abra-se para conexões autênticas.",
+          "A energia de Marte favorece relacionamentos baseados na paixão verdadeira. Seja você mesmo.",
+          "Hoje é o dia de expressar seus sentimentos com a honestidade típica de Áries."
+        ],
+        "prosperity": [
+          "Sua determinação ariana pode abrir portas para novas oportunidades financeiras. Aja com confiança.",
+          "O universo conspira a favor de seus projetos ambiciosos. É hora de dar o primeiro passo.",
+          "Sua liderança natural atrai abundância. Confie em sua capacidade de manifestar prosperidade."
+        ],
+        "spirituality": [
+          "Sua jornada espiritual ganha impulso através da ação consciente. Pratique meditação em movimento.",
+          "O elemento fogo o conecta com energias transformadoras. Busque práticas que elevem sua vibração.",
+          "Sua espiritualidade pioneira abre caminhos únicos de conexão com o divino."
+        ]
+      },
+      "Taurus": {
+        "selfKnowledge": [
+          "Sua natureza taurina convida à reflexão profunda sobre seus valores essenciais. Conecte-se com sua verdade interior.",
+          "A estabilidade que você busca começa dentro de você. Explore suas raízes emocionais com paciência.",
+          "Hoje é um dia para honrar sua sensibilidade e descobrir a força que reside em sua gentileza."
+        ],
+        "love": [
+          "Vênus abençoa seus relacionamentos com harmonia e beleza. Cultive conexões duradouras e verdadeiras.",
+          "Sua capacidade de amar profundamente é um dom raro. Permita-se ser vulnerável hoje.",
+          "O amor floresce quando você se permite ser autêntico. Expresse seus sentimentos com sinceridade."
+        ],
+        "prosperity": [
+          "Sua persistência taurina está prestes a dar frutos. Continue construindo seus sonhos com dedicação.",
+          "A abundância vem através do trabalho consistente e paciência. Confie no processo.",
+          "Hoje é favorável para decisões financeiras baseadas em planejamento sólido e intuição."
+        ],
+        "spirituality": [
+          "Sua conexão com a Terra oferece sabedoria ancestral. Pratique rituais que honrem a natureza.",
+          "A espiritualidade taurina floresce na simplicidade e gratidão pelas pequenas coisas.",
+          "Busque o sagrado na beleza cotidiana. Cada momento pode ser uma oração."
+        ]
+      },
+      "Gemini": {
+        "selfKnowledge": [
+          "Sua versatilidade geminiana revela múltiplas facetas de sua personalidade. Explore todas sem julgamento.",
+          "A curiosidade é seu superpoder. Hoje, permita-se aprender algo novo sobre si mesmo.",
+          "Sua mente brilhante pode descobrir conexões inesperadas entre diferentes aspectos de sua vida."
+        ],
+        "love": [
+          "A comunicação é a chave para seus relacionamentos hoje. Expresse-se claramente e escute com o coração.",
+          "Sua natureza social atrai pessoas interessantes. Esteja aberto a conversas que podem mudar sua vida.",
+          "O amor geminiano floresce na troca de ideias e descoberta mútua. Compartilhe seus pensamentos."
+        ],
+        "prosperity": [
+          "Suas habilidades de comunicação podem abrir portas inesperadas hoje. Use suas palavras sabiamente.",
+          "A diversificação é favorável. Considere múltiplas fontes de renda ou investimentos variados.",
+          "Sua adaptabilidade é uma vantagem competitiva. Aproveite as mudanças que surgem."
+        ],
+        "spirituality": [
+          "Sua jornada espiritual se enriquece através do diálogo e troca de experiências com outros.",
+          "A espiritualidade geminiana encontra o divino na diversidade e conexão entre todas as coisas.",
+          "Pratique meditações que integrem mente e espírito. Seu intelecto é uma ferramenta sagrada."
+        ]
+      },
+      "Cancer": {
+        "selfKnowledge": [
+          "Suas emoções são suas melhores conselheiras hoje. Confie na sabedoria do seu coração canceriano.",
+          "A introspecção revela tesouros escondidos em suas memórias e experiências passadas.",
+          "Sua sensibilidade é uma força, não uma fraqueza. Honre sua natureza empática."
+        ],
+        "love": [
+          "Sua capacidade de nutrir e cuidar é um presente para aqueles que você ama. Expresse seu carinho hoje.",
+          "A Lua favorece relacionamentos baseados em segurança emocional e confiança mútua.",
+          "Seu instinto protetor e amoroso cria vínculos profundos. Permita-se ser amado da mesma forma."
+        ],
+        "prosperity": [
+          "Sua intuição canceriana pode guiá-lo a decisões financeiras acertadas. Confie em seus palpites.",
+          "Investimentos em família, lar ou bens duradouros são favorecidos hoje.",
+          "Sua habilidade de economizar e preservar recursos é uma habilidade valiosa. Use-a sabiamente."
+        ],
+        "spirituality": [
+          "A espiritualidade canceriana se conecta com tradições familiares e sabedoria ancestral.",
+          "Pratique rituais que honrem seus ancestrais e fortaleçam suas raízes espirituais.",
+          "Seu lar é seu templo. Crie um espaço sagrado onde possa se conectar com o divino."
+        ]
+      },
+      "Leo": {
+        "selfKnowledge": [
+          "Seu brilho leonino é único no universo. Hoje é um dia para reconhecer e celebrar seus talentos especiais.",
+          "A generosidade do seu coração revela a nobreza de sua alma. Permita-se brilhar autenticamente.",
+          "Sua criatividade é uma expressão divina. Use-a para se conhecer mais profundamente."
+        ],
+        "love": [
+          "Seu coração leonino ama com paixão e grandeza. Hoje é um dia para expressar seus sentimentos com coragem.",
+          "O Sol favorece relacionamentos onde você pode ser completamente você mesmo, sem máscaras.",
+          "Sua lealdade e generosidade no amor inspiram e transformam aqueles ao seu redor."
+        ],
+        "prosperity": [
+          "Sua liderança natural atrai oportunidades de crescimento. Assuma o comando de seus projetos.",
+          "A confiança leonina pode abrir portas que pareciam impossíveis. Acredite em seu potencial.",
+          "Investimentos em sua imagem, educação ou talentos podem render retornos inesperados."
+        ],
+        "spirituality": [
+          "Sua espiritualidade brilha através da expressão criativa e celebração da vida.",
+          "O divino se manifesta em você através de sua capacidade de inspirar e iluminar outros.",
+          "Pratique rituais solares que o conectem com sua força interior e propósito de vida."
+        ]
+      },
+      "Virgo": {
+        "selfKnowledge": [
+          "Sua precisão virginiana revela detalhes importantes sobre sua verdadeira natureza. Observe cuidadosamente.",
+          "A perfeição que você busca no mundo exterior começa com a aceitação amorosa de si mesmo.",
+          "Sua capacidade analítica pode descobrir padrões ocultos em seu comportamento e emoções."
+        ],
+        "love": [
+          "Seu amor se expressa através do cuidado e atenção aos detalhes. Pequenos gestos têm grande poder hoje.",
+          "A pureza de seus sentimentos toca profundamente aqueles que conseguem ver além de sua modéstia.",
+          "Relacionamentos baseados em respeito mútuo e crescimento conjunto são favorecidos."
+        ],
+        "prosperity": [
+          "Sua organização e planejamento meticuloso estão prestes a render resultados concretos.",
+          "A prosperidade virginiana vem através do trabalho dedicado e melhoria contínua.",
+          "Hoje é favorável para revisar finanças e fazer ajustes precisos em seus investimentos."
+        ],
+        "spirituality": [
+          "Sua jornada espiritual se desenvolve através do serviço dedicado e busca pela pureza interior.",
+          "A espiritualidade virginiana encontra o sagrado na simplicidade e devoção diária.",
+          "Pratique meditações que purifiquem sua mente e alinhem seus pensamentos com propósitos elevados."
+        ]
+      }
     }
   };
 
-  // Convert goal from Portuguese to English
+  // Convert goal from Portuguese to English for key mapping
   const goalMap: Record<string, string> = {
-    "autoconhecimento": "self-knowledge",
+    "autoconhecimento": "selfKnowledge",
     "amor": "love",
     "prosperidade": "prosperity",
     "espiritualidade": "spirituality"
   };
-  
-  const englishGoal = goalMap[goal] || "self-knowledge";
-  const signMessages = messages[sign] || messages["Aries"];
-  const goalMessages = signMessages[englishGoal] || signMessages["self-knowledge"];
-  
+
+  const englishGoal = goalMap[goal] || "selfKnowledge";
+  const langMessages = messages[language] || messages['en'];
+  const signMessages = langMessages[sign] || langMessages["Aries"];
+  const goalMessages = signMessages[englishGoal] || signMessages["selfKnowledge"];
+
   const randomIndex = Math.floor(Math.random() * goalMessages.length);
   return goalMessages[randomIndex];
 };
@@ -353,7 +357,7 @@ const generatePersonalizedMessage = (sign: string, goal: string): string => {
 const getLuckyElement = (sign: string, language: Language): string => {
   const elements: Record<string, string> = {
     "Aries": "sacredFire",
-    "Leo": "solarFire", 
+    "Leo": "solarFire",
     "Sagittarius": "expansiveFire",
     "Taurus": "sacredEarth",
     "Virgo": "pureEarth",
@@ -365,7 +369,7 @@ const getLuckyElement = (sign: string, language: Language): string => {
     "Scorpio": "transformativeWater",
     "Pisces": "mysticalWater"
   };
-  
+
   const elementKey = elements[sign] || "sacredFire";
   return getUtilTranslation(language, 'horoscope.elements', elementKey);
 };
@@ -373,7 +377,7 @@ const getLuckyElement = (sign: string, language: Language): string => {
 const getEnergyColor = (sign: string, goal: string, language: Language): string => {
   const baseColors: Record<string, string> = {
     "Aries": "celestialRed",
-    "Taurus": "emeraldGreen", 
+    "Taurus": "emeraldGreen",
     "Gemini": "goldenYellow",
     "Cancer": "lunarSilver",
     "Leo": "imperialGold",
@@ -385,7 +389,7 @@ const getEnergyColor = (sign: string, goal: string, language: Language): string 
     "Aquarius": "electricBlue",
     "Pisces": "etherealViolet"
   };
-  
+
   const colorKey = baseColors[sign] || "celestialRed";
   return getUtilTranslation(language, 'horoscope.colors', colorKey);
 };
@@ -394,20 +398,20 @@ const getSpiritualFocus = (sign: string, goal: string, language: Language): stri
   const focuses: Record<string, Record<string, string>> = {
     "Aries": {
       "self-knowledge": "ariesSelfKnowledge",
-      "love": "ariesLove",  
+      "love": "ariesLove",
       "prosperity": "ariesProsperity",
       "spirituality": "ariesSpirituality"
     },
     "Taurus": {
       "self-knowledge": "taurusSelfKnowledge",
-      "love": "taurusLove", 
+      "love": "taurusLove",
       "prosperity": "taurusProsperity",
       "spirituality": "taurusSpirituality"
     },
     "Gemini": {
       "self-knowledge": "geminiSelfKnowledge",
       "love": "geminiLove",
-      "prosperity": "geminiProsperity", 
+      "prosperity": "geminiProsperity",
       "spirituality": "geminiSpirituality"
     },
     "Cancer": {
@@ -417,7 +421,7 @@ const getSpiritualFocus = (sign: string, goal: string, language: Language): stri
       "spirituality": "cancerSpirituality"
     },
     "Leo": {
-      "self-knowledge": "leoSelfKnowledge", 
+      "self-knowledge": "leoSelfKnowledge",
       "love": "leoLove",
       "prosperity": "leoProsperity",
       "spirituality": "leoSpirituality"
@@ -430,7 +434,7 @@ const getSpiritualFocus = (sign: string, goal: string, language: Language): stri
     },
     "Libra": {
       "self-knowledge": "libraSelfKnowledge",
-      "love": "libraLove", 
+      "love": "libraLove",
       "prosperity": "libraProsperity",
       "spirituality": "libraSpirituality"
     },
@@ -443,7 +447,7 @@ const getSpiritualFocus = (sign: string, goal: string, language: Language): stri
     "Sagittarius": {
       "self-knowledge": "sagittariusSelfKnowledge",
       "love": "sagittariusLove",
-      "prosperity": "sagittariusProsperity", 
+      "prosperity": "sagittariusProsperity",
       "spirituality": "sagittariusSpirituality"
     },
     "Capricorn": {
@@ -465,15 +469,15 @@ const getSpiritualFocus = (sign: string, goal: string, language: Language): stri
       "spirituality": "piscesSpirituality"
     }
   };
-  
+
   // Convert goal from Portuguese to English
   const goalMap: Record<string, string> = {
     "autoconhecimento": "self-knowledge",
-    "amor": "love", 
+    "amor": "love",
     "prosperidade": "prosperity",
     "espiritualidade": "spirituality"
   };
-  
+
   const englishGoal = goalMap[goal] || "self-knowledge";
   const focusKey = focuses[sign]?.[englishGoal] || "ariesSelfKnowledge";
   return getUtilTranslation(language, 'horoscope.spiritualFocus', focusKey);
@@ -484,21 +488,21 @@ export const getTodaysNumbers = (sign: string, date: Date = new Date()): number[
   const signNumbers: Record<string, number[]> = {
     "Aries": [1, 8, 15, 22, 29],
     "Taurus": [2, 9, 16, 23, 30],
-    "Gemini": [3, 10, 17, 24, 31], 
+    "Gemini": [3, 10, 17, 24, 31],
     "Cancer": [4, 11, 18, 25, 32],
     "Leo": [5, 12, 19, 26, 33],
     "Virgo": [6, 13, 20, 27, 34],
     "Libra": [7, 14, 21, 28, 35],
     "Scorpio": [8, 15, 22, 29, 36],
     "Sagittarius": [9, 16, 23, 30, 37],
-    "Capricorn": [10, 17, 24, 31, 38], 
+    "Capricorn": [10, 17, 24, 31, 38],
     "Aquarius": [11, 18, 25, 32, 39],
     "Pisces": [12, 19, 26, 33, 40]
   };
-  
+
   const baseNumbers = signNumbers[sign] || signNumbers["Aries"];
   const dateModifier = date.getDate() % 5;
-  
+
   return baseNumbers.map(num => (num + dateModifier) % 50 + 1).slice(0, 3);
 };
 
@@ -517,7 +521,7 @@ export const getDailyPrediction = (sign: string): string => {
     ],
     "Gemini": [
       "Communication opens doors to new opportunities.",
-      "Your curiosity leads to valuable insights.", 
+      "Your curiosity leads to valuable insights.",
       "Networking brings beneficial connections."
     ],
     "Cancer": [
@@ -566,10 +570,10 @@ export const getDailyPrediction = (sign: string): string => {
       "Spiritual practices bring inner peace and clarity."
     ]
   };
-  
+
   const signPredictions = predictions[sign] || predictions["Aries"];
   const today = new Date();
   const index = today.getDate() % signPredictions.length;
-  
+
   return signPredictions[index];
 };

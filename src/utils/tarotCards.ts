@@ -1,6 +1,4 @@
-import { getUtilTranslation, type Language } from "@/i18n/translations";
-import { en } from "@/i18n/en";
-import { pt } from "@/i18n/pt";
+import { type Language } from "@/i18n/translations";
 
 export interface TarotCard {
   id: number;
@@ -14,9 +12,384 @@ export interface TarotCard {
   isReversed?: boolean;
 }
 
-// Helper function to get translations
-const getTranslations = (language: Language = "en") => {
-  return language === "pt" ? pt : en;
+// Helper function to get tarot card translations
+const getTarotTranslations = (language: Language = "en") => {
+  const translations = {
+    en: {
+      majorArcana: {
+        theFool: {
+          name: "The Fool",
+          meaning: "New beginnings, spontaneity, innocence",
+          reversedMeaning: "Recklessness, irresponsibility, lack of direction",
+          description: "Represents the beginning of a journey, courage to start something new"
+        },
+        theMagician: {
+          name: "The Magician",
+          meaning: "Personal power, skill, concentration",
+          reversedMeaning: "Manipulation, poor direction, lack of energy",
+          description: "Symbolizes the ability to manifest desires into reality"
+        },
+        theHighPriestess: {
+          name: "The High Priestess",
+          meaning: "Intuition, hidden wisdom, sacred feminine",
+          reversedMeaning: "Ignorance, lack of intuition, secrets revealed",
+          description: "Represents connection with the unconscious and inner wisdom"
+        },
+        theEmpress: {
+          name: "The Empress",
+          meaning: "Fertility, creativity, abundance",
+          reversedMeaning: "Dependence, neglect, sterility",
+          description: "Symbolizes feminine creative energy and natural abundance"
+        },
+        theEmperor: {
+          name: "The Emperor",
+          meaning: "Authority, structure, control",
+          reversedMeaning: "Tyranny, rigidity, lack of discipline",
+          description: "Represents authority, order and structure in life"
+        },
+        theHierophant: {
+          name: "The Hierophant",
+          meaning: "Tradition, education, spirituality",
+          reversedMeaning: "Rebellion, subversion, non-conformity",
+          description: "Symbolizes spiritual traditions and search for meaning"
+        },
+        theLovers: {
+          name: "The Lovers",
+          meaning: "Love, union, choices",
+          reversedMeaning: "Separation, bad choice, imbalance",
+          description: "Represents important choices and deep connections"
+        },
+        theChariot: {
+          name: "The Chariot",
+          meaning: "Victory, determination, control",
+          reversedMeaning: "Lack of control, aggression, lack of direction",
+          description: "Symbolizes triumph through determination and willpower"
+        },
+        strength: {
+          name: "Strength",
+          meaning: "Inner strength, courage, patience",
+          reversedMeaning: "Weakness, insecurity, lack of self-control",
+          description: "Represents inner strength and gentle control over adversity"
+        },
+        theHermit: {
+          name: "The Hermit",
+          meaning: "Introspection, inner search, guidance",
+          reversedMeaning: "Isolation, paranoia, rejection of help",
+          description: "Symbolizes the inner journey in search of wisdom"
+        },
+        wheelOfFortune: {
+          name: "Wheel of Fortune",
+          meaning: "Cycles, destiny, good luck",
+          reversedMeaning: "Bad luck, lack of control, negative cycles",
+          description: "Represents life cycles and changes of destiny"
+        },
+        justice: {
+          name: "Justice",
+          meaning: "Justice, truth, cause and effect",
+          reversedMeaning: "Injustice, lack of responsibility, dishonesty",
+          description: "Symbolizes balance, truth and consequences of our actions"
+        },
+        theHangedMan: {
+          name: "The Hanged Man",
+          meaning: "Suspension, surrender, new perspective",
+          reversedMeaning: "Delay, resistance, indecision",
+          description: "Represents necessary sacrifice and change of perspective"
+        },
+        death: {
+          name: "Death",
+          meaning: "Transformation, ending, rebirth",
+          reversedMeaning: "Resistance to change, fear, stagnation",
+          description: "Symbolizes profound transformation and new beginnings"
+        },
+        temperance: {
+          name: "Temperance",
+          meaning: "Balance, moderation, patience",
+          reversedMeaning: "Imbalance, excess, lack of harmony",
+          description: "Represents balance and integration of opposites"
+        },
+        theDevil: {
+          name: "The Devil",
+          meaning: "Temptation, materialism, ignorance",
+          reversedMeaning: "Freedom, revelation, breaking chains",
+          description: "Symbolizes illusions that bind us and the need for liberation"
+        },
+        theTower: {
+          name: "The Tower",
+          meaning: "Sudden change, revelation, liberation",
+          reversedMeaning: "Resistance to change, fear, disaster averted",
+          description: "Represents sudden changes that break old structures"
+        },
+        theStar: {
+          name: "The Star",
+          meaning: "Hope, inspiration, spiritual guidance",
+          reversedMeaning: "Despair, lack of faith, lost guidance",
+          description: "Symbolizes hope, inspiration and divine guidance"
+        },
+        theMoon: {
+          name: "The Moon",
+          meaning: "Illusion, intuition, unconscious",
+          reversedMeaning: "Truth revealed, clarity, overcoming fears",
+          description: "Represents the world of dreams, intuition and hidden fears"
+        },
+        theSun: {
+          name: "The Sun",
+          meaning: "Joy, success, vitality",
+          reversedMeaning: "Pessimism, lack of enthusiasm, delays",
+          description: "Symbolizes joy, success and positive energy"
+        },
+        judgement: {
+          name: "Judgement",
+          meaning: "Rebirth, inner judgment, calling",
+          reversedMeaning: "Severe self-criticism, fear of judgment, delays",
+          description: "Represents spiritual awakening and inner judgment"
+        },
+        theWorld: {
+          name: "The World",
+          meaning: "Achievement, success, journey",
+          reversedMeaning: "Lack of closure, seeking shortcuts, delays",
+          description: "Symbolizes complete achievement and success on all levels"
+        }
+      },
+      minorArcana: {
+        aceOfCups: {
+          name: "Ace of Cups",
+          meaning: "New love, spiritual joy, intuition",
+          reversedMeaning: "Emotional blockage, unrequited love",
+          description: "Represents emotional new beginnings and opening of the heart"
+        },
+        twoOfCups: {
+          name: "Two of Cups",
+          meaning: "Partnership, mutual love, union",
+          reversedMeaning: "Separation, disagreement, self-love",
+          description: "Symbolizes deep emotional connections and partnerships"
+        },
+        aceOfWands: {
+          name: "Ace of Wands",
+          meaning: "New project, inspiration, growth",
+          reversedMeaning: "Lack of direction, delayed projects",
+          description: "Represents new projects and creative energy"
+        },
+        twoOfWands: {
+          name: "Two of Wands",
+          meaning: "Planning, progress, discoveries",
+          reversedMeaning: "Lack of planning, fear of change",
+          description: "Symbolizes future planning and long-term vision"
+        },
+        aceOfSwords: {
+          name: "Ace of Swords",
+          meaning: "Mental clarity, truth, new thought",
+          reversedMeaning: "Confusion, lack of clarity, chaotic thoughts",
+          description: "Represents mental clarity and new insights"
+        },
+        twoOfSwords: {
+          name: "Two of Swords",
+          meaning: "Difficult decision, balance, dilemma",
+          reversedMeaning: "Indecision, confusion, hidden information",
+          description: "Symbolizes the need to make important decisions"
+        },
+        aceOfPentacles: {
+          name: "Ace of Pentacles",
+          meaning: "Prosperity, opportunity, manifestation",
+          reversedMeaning: "Lost opportunity, greed, lack of prosperity",
+          description: "Represents new material opportunities and prosperity"
+        },
+        twoOfPentacles: {
+          name: "Two of Pentacles",
+          meaning: "Balance, adaptability, multiple options",
+          reversedMeaning: "Imbalance, lack of organization, overwhelm",
+          description: "Symbolizes the need to balance multiple responsibilities"
+        }
+      }
+    },
+    pt: {
+      majorArcana: {
+        theFool: {
+          name: "O Louco",
+          meaning: "Novos começos, espontaneidade, inocência",
+          reversedMeaning: "Imprudência, irresponsabilidade, falta de direção",
+          description: "Representa o início de uma jornada, coragem para começar algo novo"
+        },
+        theMagician: {
+          name: "O Mago",
+          meaning: "Poder pessoal, habilidade, concentração",
+          reversedMeaning: "Manipulação, direção pobre, falta de energia",
+          description: "Simboliza a capacidade de manifestar desejos na realidade"
+        },
+        theHighPriestess: {
+          name: "A Sacerdotisa",
+          meaning: "Intuição, sabedoria oculta, feminino sagrado",
+          reversedMeaning: "Ignorância, falta de intuição, segredos revelados",
+          description: "Representa conexão com o inconsciente e sabedoria interior"
+        },
+        theEmpress: {
+          name: "A Imperatriz",
+          meaning: "Fertilidade, criatividade, abundância",
+          reversedMeaning: "Dependência, negligência, esterilidade",
+          description: "Simboliza energia criativa feminina e abundância natural"
+        },
+        theEmperor: {
+          name: "O Imperador",
+          meaning: "Autoridade, estrutura, controle",
+          reversedMeaning: "Tirania, rigidez, falta de disciplina",
+          description: "Representa autoridade, ordem e estrutura na vida"
+        },
+        theHierophant: {
+          name: "O Hierofante",
+          meaning: "Tradição, educação, espiritualidade",
+          reversedMeaning: "Rebelião, subversão, não-conformidade",
+          description: "Simboliza tradições espirituais e busca por significado"
+        },
+        theLovers: {
+          name: "Os Amantes",
+          meaning: "Amor, união, escolhas",
+          reversedMeaning: "Separação, má escolha, desequilíbrio",
+          description: "Representa escolhas importantes e conexões profundas"
+        },
+        theChariot: {
+          name: "O Carro",
+          meaning: "Vitória, determinação, controle",
+          reversedMeaning: "Falta de controle, agressão, falta de direção",
+          description: "Simboliza triunfo através de determinação e força de vontade"
+        },
+        strength: {
+          name: "A Força",
+          meaning: "Força interior, coragem, paciência",
+          reversedMeaning: "Fraqueza, insegurança, falta de autocontrole",
+          description: "Representa força interior e controle suave sobre adversidades"
+        },
+        theHermit: {
+          name: "O Eremita",
+          meaning: "Introspecção, busca interior, orientação",
+          reversedMeaning: "Isolamento, paranoia, rejeição de ajuda",
+          description: "Simboliza a jornada interior em busca de sabedoria"
+        },
+        wheelOfFortune: {
+          name: "A Roda da Fortuna",
+          meaning: "Ciclos, destino, boa sorte",
+          reversedMeaning: "Má sorte, falta de controle, ciclos negativos",
+          description: "Representa ciclos da vida e mudanças de destino"
+        },
+        justice: {
+          name: "A Justiça",
+          meaning: "Justiça, verdade, causa e efeito",
+          reversedMeaning: "Injustiça, falta de responsabilidade, desonestidade",
+          description: "Simboliza equilíbrio, verdade e consequências de nossas ações"
+        },
+        theHangedMan: {
+          name: "O Enforcado",
+          meaning: "Suspensão, rendição, nova perspectiva",
+          reversedMeaning: "Atraso, resistência, indecisão",
+          description: "Representa sacrifício necessário e mudança de perspectiva"
+        },
+        death: {
+          name: "A Morte",
+          meaning: "Transformação, fim, renascimento",
+          reversedMeaning: "Resistência à mudança, medo, estagnação",
+          description: "Simboliza transformação profunda e novos começos"
+        },
+        temperance: {
+          name: "A Temperança",
+          meaning: "Equilíbrio, moderação, paciência",
+          reversedMeaning: "Desequilíbrio, excesso, falta de harmonia",
+          description: "Representa equilíbrio e integração de opostos"
+        },
+        theDevil: {
+          name: "O Diabo",
+          meaning: "Tentação, materialismo, ignorância",
+          reversedMeaning: "Liberdade, revelação, quebra de correntes",
+          description: "Simboliza ilusões que nos prendem e necessidade de libertação"
+        },
+        theTower: {
+          name: "A Torre",
+          meaning: "Mudança súbita, revelação, libertação",
+          reversedMeaning: "Resistência à mudança, medo, desastre evitado",
+          description: "Representa mudanças súbitas que quebram estruturas antigas"
+        },
+        theStar: {
+          name: "A Estrela",
+          meaning: "Esperança, inspiração, orientação espiritual",
+          reversedMeaning: "Desespero, falta de fé, orientação perdida",
+          description: "Simboliza esperança, inspiração e orientação divina"
+        },
+        theMoon: {
+          name: "A Lua",
+          meaning: "Ilusão, intuição, inconsciente",
+          reversedMeaning: "Verdade revelada, clareza, superação de medos",
+          description: "Representa o mundo dos sonhos, intuição e medos ocultos"
+        },
+        theSun: {
+          name: "O Sol",
+          meaning: "Alegria, sucesso, vitalidade",
+          reversedMeaning: "Pessimismo, falta de entusiasmo, atrasos",
+          description: "Simboliza alegria, sucesso e energia positiva"
+        },
+        judgement: {
+          name: "O Julgamento",
+          meaning: "Renascimento, julgamento interior, chamado",
+          reversedMeaning: "Autocrítica severa, medo de julgamento, atrasos",
+          description: "Representa despertar espiritual e julgamento interior"
+        },
+        theWorld: {
+          name: "O Mundo",
+          meaning: "Realização, sucesso, jornada",
+          reversedMeaning: "Falta de conclusão, busca por atalhos, atrasos",
+          description: "Simboliza realização completa e sucesso em todos os níveis"
+        }
+      },
+      minorArcana: {
+        aceOfCups: {
+          name: "Ás de Copas",
+          meaning: "Novo amor, alegria espiritual, intuição",
+          reversedMeaning: "Bloqueio emocional, amor não correspondido",
+          description: "Representa novos começos emocionais e abertura do coração"
+        },
+        twoOfCups: {
+          name: "Dois de Copas",
+          meaning: "Parceria, amor mútuo, união",
+          reversedMeaning: "Separação, desacordo, amor próprio",
+          description: "Simboliza conexões emocionais profundas e parcerias"
+        },
+        aceOfWands: {
+          name: "Ás de Paus",
+          meaning: "Novo projeto, inspiração, crescimento",
+          reversedMeaning: "Falta de direção, projetos atrasados",
+          description: "Representa novos projetos e energia criativa"
+        },
+        twoOfWands: {
+          name: "Dois de Paus",
+          meaning: "Planejamento, progresso, descobertas",
+          reversedMeaning: "Falta de planejamento, medo de mudança",
+          description: "Simboliza planejamento futuro e visão de longo prazo"
+        },
+        aceOfSwords: {
+          name: "Ás de Espadas",
+          meaning: "Clareza mental, verdade, novo pensamento",
+          reversedMeaning: "Confusão, falta de clareza, pensamentos caóticos",
+          description: "Representa clareza mental e novos insights"
+        },
+        twoOfSwords: {
+          name: "Dois de Espadas",
+          meaning: "Decisão difícil, equilíbrio, dilema",
+          reversedMeaning: "Indecisão, confusão, informação oculta",
+          description: "Simboliza a necessidade de tomar decisões importantes"
+        },
+        aceOfPentacles: {
+          name: "Ás de Ouros",
+          meaning: "Prosperidade, oportunidade, manifestação",
+          reversedMeaning: "Oportunidade perdida, ganância, falta de prosperidade",
+          description: "Representa novas oportunidades materiais e prosperidade"
+        },
+        twoOfPentacles: {
+          name: "Dois de Ouros",
+          meaning: "Equilíbrio, adaptabilidade, múltiplas opções",
+          reversedMeaning: "Desequilíbrio, falta de organização, sobrecarga",
+          description: "Simboliza a necessidade de equilibrar múltiplas responsabilidades"
+        }
+      }
+    }
+  };
+
+  return translations[language] || translations['en'];
 };
 
 // Card key mappings for major arcana
@@ -59,26 +432,10 @@ const minorArcanaKeys = [
 
 // Generate major arcana from translations
 const getMajorArcana = (language: Language = "en"): TarotCard[] => {
-  const translations = getTranslations(language);
+  const translations = getTarotTranslations(language);
   
-  // Debug logging
-  console.log(`[DEBUG] getMajorArcana called with language: ${language}`);
-  console.log(`[DEBUG] translations.utils exists:`, !!translations.utils);
-  
-  // Fix: The correct path is utils.tarot, not utils.oracle.tarot
-  const tarotData = (translations.utils as any).tarot;
-  
-  console.log(`[DEBUG] tarotData exists:`, !!tarotData);
-  console.log(`[DEBUG] tarotData.majorArcana exists:`, !!tarotData?.majorArcana);
-
-  if (!tarotData || !tarotData.majorArcana) {
-    console.error(`[ERROR] Tarot data not found for language: ${language}`);
-    // Fallback to hardcoded data to prevent infinite loops
-    return fallbackMajorArcana;
-  }
-
   return majorArcanaKeys.map((key, index) => {
-    const card = tarotData.majorArcana[key];
+    const card = translations.majorArcana[key];
     if (!card) {
       console.error(`[ERROR] Card not found: ${key} for language: ${language}`);
       return fallbackMajorArcana[0]; // Fallback to hardcoded card
@@ -98,22 +455,10 @@ const getMajorArcana = (language: Language = "en"): TarotCard[] => {
 
 // Generate minor arcana from translations
 const getMinorArcana = (language: Language = "en"): TarotCard[] => {
-  const translations = getTranslations(language);
-  
-  // Debug logging
-  console.log(`[DEBUG] getMinorArcana called with language: ${language}`);
-  
-  // Fix: The correct path is utils.tarot, not utils.oracle.tarot
-  const tarotData = (translations.utils as any).tarot;
-
-  if (!tarotData || !tarotData.minorArcana) {
-    console.error(`[ERROR] Minor arcana data not found for language: ${language}`);
-    // Fallback to hardcoded data to prevent infinite loops
-    return fallbackMinorArcana;
-  }
+  const translations = getTarotTranslations(language);
 
   return minorArcanaKeys.map((item, index) => {
-    const card = tarotData.minorArcana[item.key];
+    const card = translations.minorArcana[item.key];
     if (!card) {
       console.error(`[ERROR] Minor card not found: ${item.key} for language: ${language}`);
       return fallbackMinorArcana[0]; // Fallback to hardcoded card
@@ -494,14 +839,9 @@ export const getRandomCards = (
   count: number,
   language: Language = "en"
 ): TarotCard[] => {
-  console.log(`[DEBUG] getRandomCards called with count: ${count}, language: ${language}`);
-  
   try {
     const majorCards = getMajorArcana(language);
     const minorCards = getMinorArcana(language);
-    
-    console.log(`[DEBUG] Major cards loaded: ${majorCards.length}`);
-    console.log(`[DEBUG] Minor cards loaded: ${minorCards.length}`);
     
     const cards = [...majorCards, ...minorCards];
     const shuffled = [...cards].sort(() => 0.5 - Math.random());
@@ -510,7 +850,6 @@ export const getRandomCards = (
       isReversed: Math.random() < 0.3, // 30% chance of reversed card
     }));
     
-    console.log(`[DEBUG] Returning ${result.length} cards`);
     return result;
   } catch (error) {
     console.error(`[ERROR] Failed to get random cards:`, error);

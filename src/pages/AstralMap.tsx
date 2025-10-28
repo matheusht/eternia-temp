@@ -22,6 +22,13 @@ const AstralMap = () => {
     en: {
       yourAstrologicalData: "Your Astrological Data",
       spiritualGoals: "Spiritual Goals",
+      yourMapInterpretation: "Your Map Interpretation",
+      spiritualFocus: "Spiritual Focus",
+      luckyElement: "Lucky Element",
+      canEnhanceEnergy: "can enhance your energy",
+      energyColor: "Energy Color",
+      useEnergyColor: "Use the color",
+      toHarmonize: "to harmonize your vibrations",
       goals: {
         autoconhecimento: "Self-Knowledge",
         amor: "Love",
@@ -36,6 +43,13 @@ const AstralMap = () => {
     pt: {
       yourAstrologicalData: "Seus Dados Astrológicos",
       spiritualGoals: "Objetivos Espirituais",
+      yourMapInterpretation: "Interpretação do Seu Mapa",
+      spiritualFocus: "Foco Espiritual",
+      luckyElement: "Elemento da Sorte",
+      canEnhanceEnergy: "pode potencializar sua energia",
+      energyColor: "Cor Energética",
+      useEnergyColor: "Use a cor",
+      toHarmonize: "para harmonizar suas vibrações",
       goals: {
         autoconhecimento: "Autoconhecimento",
         amor: "Amor",
@@ -96,7 +110,8 @@ const AstralMap = () => {
     profile.goal ||
     (profile.goals && profile.goals.length > 0
       ? profile.goals[0]
-      : "autoconhecimento")
+      : "autoconhecimento"),
+    isPortuguese ? 'pt' : 'en'
   );
 
   const astralData = {
@@ -288,24 +303,24 @@ const AstralMap = () => {
           {/* Interpretação */}
           <Card className="mystic-border mt-6">
             <CardHeader>
-              <CardTitle>{t("astralMap.yourMapInterpretation")}</CardTitle>
+              <CardTitle>{getDirectText("yourMapInterpretation")}</CardTitle>
             </CardHeader>
             <CardContent className="prose prose-sm max-w-none">
               <p className="text-muted-foreground">
                 {horoscopeData.personalizedMessage}
               </p>
               <p className="text-muted-foreground mt-4">
-                <strong>{t("astralMap.spiritualFocus")}:</strong>{" "}
+                <strong>{getDirectText("spiritualFocus")}:</strong>{" "}
                 {horoscopeData.spiritualFocus}
               </p>
               <p className="text-muted-foreground mt-2">
-                <strong>{t("astralMap.luckyElement")}:</strong>{" "}
-                {horoscopeData.luckyElement} {t("astralMap.canEnhanceEnergy")}
+                <strong>{getDirectText("luckyElement")}:</strong>{" "}
+                {horoscopeData.luckyElement} {getDirectText("canEnhanceEnergy")}
               </p>
               <p className="text-muted-foreground mt-2">
-                <strong>{t("astralMap.energyColor")}:</strong>{" "}
-                {t("astralMap.useEnergyColor")} {horoscopeData.energyColor}{" "}
-                {t("astralMap.toHarmonize")}
+                <strong>{getDirectText("energyColor")}:</strong>{" "}
+                {getDirectText("useEnergyColor")} {horoscopeData.energyColor}{" "}
+                {getDirectText("toHarmonize")}
               </p>
             </CardContent>
           </Card>
