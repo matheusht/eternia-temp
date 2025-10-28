@@ -187,6 +187,52 @@ const SpiritualDiary = () => {
     }
   };
 
+  const handleRegenerateAnalysis = async (entry: DiaryEntry) => {
+    if (!profile) return;
+
+    try {
+      // Generate new analysis in current language
+      const newAnalysis = analyzeEntry(
+        entry.type,
+        entry.title,
+        entry.content,
+        profile.goal || "spirituality",
+        language
+      );
+
+      // Update in database
+      const { error } = await supabase
+        .from("diary_entries")
+        .update({ ai_analysis: newAnalysis })
+        .eq("id", entry.id);
+
+      if (error) throw error;
+
+      // Update local state
+      setEntries(entries.map(e => 
+        e.id === entry.id 
+          ? { ...e, ai_analysis: newAnalysis }
+          : e
+      ));
+
+      toast({
+        title: t("common.success"),
+        description: language === 'pt' 
+          ? "Análise regenerada com sucesso!" 
+          : "Analysis regenerated successfully!",
+      });
+    } catch (error) {
+      console.error("Error regenerating analysis:", error);
+      toast({
+        title: t("common.error"),
+        description: language === 'pt'
+          ? "Erro ao regenerar análise"
+          : "Error regenerating analysis",
+        variant: "destructive",
+      });
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen cosmic-bg p-4">
@@ -380,11 +426,22 @@ const SpiritualDiary = () => {
 
                     {entry.ai_analysis && (
                       <div className="bg-primary/5 rounded-lg p-4 border-l-4 border-primary">
-                        <div className="flex items-center gap-2 mb-2">
-                          <Sparkles className="w-4 h-4 text-primary" />
-                          <span className="text-sm font-medium text-primary">
-                            {t("spiritualDiary.spiritualAiAnalysis")}
-                          </span>
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <Sparkles className="w-4 h-4 text-primary" />
+                            <span className="text-sm font-medium text-primary">
+                              {t("spiritualDiary.spiritualAiAnalysis")}
+                            </span>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleRegenerateAnalysis(entry)}
+                            className="text-xs text-muted-foreground hover:text-primary"
+                            title={language === 'pt' ? 'Regenerar análise' : 'Regenerate analysis'}
+                          >
+                            🔄
+                          </Button>
                         </div>
                         <p className="text-sm text-muted-foreground italic">
                           {entry.ai_analysis}

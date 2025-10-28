@@ -1,7 +1,7 @@
 export const pt = {
   levels: {
     apprentice: "Aprendiz",
-    initiate: "Iniciado",
+    initiate: "Aventureiro",
     sage: "Sábio",
     master: "Mestre",
   },

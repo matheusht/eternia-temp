@@ -24,6 +24,7 @@ import {
 } from "@/utils/astrologyElements";
 import { useTranslation } from "@/hooks/useTranslation";
 import { formatDate } from "@/utils/dateFormat";
+import { useLocation } from "react-router-dom";
 
 import cosmicHeader from "@/assets/cosmic-header.jpg";
 
@@ -50,8 +51,31 @@ interface DailyDashboardProps {
 export const DailyDashboard = ({ profile }: DailyDashboardProps) => {
   const { addActivity } = useUserData();
   const { t, language } = useTranslation();
+  const location = useLocation();
+  const isPortuguese = location.pathname.startsWith("/pt");
   const [spiritualAlert, setSpiritualAlert] = useState("");
   const [isPracticeCompleted, setIsPracticeCompleted] = useState(false);
+
+  // Level translations
+  const getLevelName = (level: string): string => {
+    const levelTranslations = {
+      en: {
+        "Apprentice": "Apprentice",
+        "Initiate": "Initiate", 
+        "Sage": "Sage",
+        "Master": "Master"
+      },
+      pt: {
+        "Apprentice": "Aprendiz",
+        "Initiate": "Aventureiro",
+        "Sage": "Sábio", 
+        "Master": "Mestre"
+      }
+    };
+
+    const lang = isPortuguese ? 'pt' : 'en';
+    return levelTranslations[lang][level as keyof typeof levelTranslations.en] || level;
+  };
 
   const today = formatDate(new Date(), language, {
     weekday: "long",
@@ -144,7 +168,7 @@ export const DailyDashboard = ({ profile }: DailyDashboardProps) => {
                 </div>
                 <div>
                   <h3 className="font-medium">
-                    {profile.current_level} {t("dashboard.level")}
+                    {getLevelName(profile.current_level)} {t("dashboard.level")}
                   </h3>
                   <p className="text-sm text-muted-foreground">
                     {profile.total_points} {t("dashboard.points")}
