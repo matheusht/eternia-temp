@@ -1,15 +1,15 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserData } from "@/hooks/useUserData";
 import { MarriageCompatibility } from "@/components/MarriageCompatibility";
 import { AppLayout } from "@/components/AppLayout";
 import { useTranslation } from "@/hooks/useTranslation";
+import { useLanguageNavigation } from "@/hooks/useLanguageNavigation";
 
 const Compatibility = () => {
   const { user } = useAuth();
   const { profile } = useUserData();
-  const navigate = useNavigate();
+  const { navigate } = useLanguageNavigation();
   const { t } = useTranslation();
 
   useEffect(() => {

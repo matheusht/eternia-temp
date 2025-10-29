@@ -1,9 +1,16 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Sparkles, Star, Moon, Sun } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
+import { useLanguageContext } from "@/contexts/LanguageContext";
 
 export const HoroscopeImportance = () => {
   const { t } = useTranslation();
+  const { language } = useLanguageContext();
+
+  const tipTranslations = {
+    en: "Tip",
+    pt: "Dica"
+  };
 
   const benefits = [
     {
@@ -69,7 +76,7 @@ export const HoroscopeImportance = () => {
 
       <div className="bg-gradient-to-r from-primary/10 to-secondary/10 rounded-lg p-4 border mystic-border">
         <p className="text-sm text-center text-muted-foreground">
-          <span className="text-primary font-medium">{t('common.tip')}:</span> {t('onboarding.accuracyTip')}
+          <span className="text-primary font-medium">{tipTranslations[language]}:</span> {t('onboarding.accuracyTip')}
         </p>
       </div>
     </div>

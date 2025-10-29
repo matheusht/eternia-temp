@@ -1,16 +1,13 @@
-import { useLocation } from "react-router-dom";
 import { useCallback } from "react";
 import {
   getTranslation,
   replacePlaceholders,
   type Language,
 } from "@/i18n/translations";
+import { useLanguageContext } from "@/contexts/LanguageContext";
 
 export const useTranslation = () => {
-  const location = useLocation();
-
-  // Route-based language detection: /pt prefix = Portuguese, otherwise English
-  const language: Language = location.pathname.startsWith("/pt") ? "pt" : "en";
+  const { language } = useLanguageContext();
 
   // Memoize the translation function to prevent infinite re-renders
   const t = useCallback(

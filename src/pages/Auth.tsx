@@ -6,10 +6,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
 import { Stars, Sparkles, Mail, ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { z } from "zod";
 import { useTranslation } from "@/hooks/useTranslation";
+import { useLanguageNavigation } from "@/hooks/useLanguageNavigation";
 
 const createEmailSchema = (t: (key: string) => string) => z.object({
   email: z.string()
@@ -51,7 +51,7 @@ const Auth = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
-  const navigate = useNavigate();
+  const { navigate, routes } = useLanguageNavigation();
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -124,7 +124,7 @@ const Auth = () => {
           title: t('auth.signInSuccess'),
           description: t('auth.signInSuccessDescription'),
         });
-        window.location.href = '/';
+        window.location.href = routes.dashboard;
       }
     } catch (error: any) {
       toast({
@@ -219,7 +219,7 @@ const Auth = () => {
       });
 
       // Clear the URL parameters and redirect to home
-      window.history.replaceState({}, document.title, '/auth');
+      window.history.replaceState({}, document.title, routes.auth);
       setIsPasswordRecovery(false);
       navigate('/');
 

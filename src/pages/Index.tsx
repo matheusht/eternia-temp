@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { OnboardingFlow } from "@/components/OnboardingFlow";
 import { DailyDashboard } from "@/components/DailyDashboard";
 import { EterniaLanding } from "@/components/EterniaLanding";
@@ -8,6 +7,7 @@ import { useUserData } from "@/hooks/useUserData";
 import { supabase } from "@/integrations/supabase/client";
 import { AppLayout } from "@/components/AppLayout";
 import { useTranslation } from "@/hooks/useTranslation";
+import { useLanguageNavigation } from "@/hooks/useLanguageNavigation";
 
 interface OnboardingData {
   displayName: string;
@@ -23,7 +23,7 @@ interface OnboardingData {
 const Index = () => {
   const { user, loading: authLoading, signOut } = useAuth();
   const { profile, loading: profileLoading, addActivity } = useUserData();
-  const navigate = useNavigate();
+  const { navigate, routes } = useLanguageNavigation();
   const { t } = useTranslation();
   const [showLanding, setShowLanding] = useState(true);
 

@@ -1,21 +1,21 @@
 import { useEffect } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Star, Moon, Sun } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+
 import { useAuth } from "@/hooks/useAuth";
 import { useUserData } from "@/hooks/useUserData";
 import { getPersonalizedHoroscope } from "@/utils/horoscope";
 import { AppLayout } from "@/components/AppLayout";
 import { useTranslation } from "@/hooks/useTranslation";
-import { useLocation } from "react-router-dom";
+import { useLanguageContext } from "@/contexts/LanguageContext";
+import { useLanguageNavigation } from "@/hooks/useLanguageNavigation";
 
 const AstralMap = () => {
-  const navigate = useNavigate();
   const { user } = useAuth();
   const { profile } = useUserData();
   const { t } = useTranslation();
-  const location = useLocation();
-  const isPortuguese = location.pathname.startsWith("/pt");
+  const { language } = useLanguageContext();
+  const { navigate } = useLanguageNavigation();
 
   // Direct translations for specific sections
   const directTexts = {
@@ -64,9 +64,8 @@ const AstralMap = () => {
   };
 
   const getDirectText = (key: string): string => {
-    const lang = isPortuguese ? 'pt' : 'en';
     const keys = key.split('.');
-    let value: any = directTexts[lang];
+    let value: any = directTexts[language];
 
     for (const k of keys) {
       value = value?.[k];
@@ -100,7 +99,7 @@ const AstralMap = () => {
 
   // Get goal label from direct translations
   const getGoalLabel = (goalId: string): string => {
-    return getDirectText(`goals.${goalId}`);
+    return directTexts[language]?.goals?.[goalId as keyof typeof directTexts.en.goals] || goalId;
   };
 
   const horoscopeData = getPersonalizedHoroscope(
@@ -111,7 +110,7 @@ const AstralMap = () => {
     (profile.goals && profile.goals.length > 0
       ? profile.goals[0]
       : "autoconhecimento"),
-    isPortuguese ? 'pt' : 'en'
+    language
   );
 
   const astralData = {

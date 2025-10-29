@@ -1,18 +1,21 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { Home, Brain, Map, BookOpen, BarChart, Sparkles, Sun, Heart } from "lucide-react";
-
-const tabs = [
-  { id: "dashboard", label: "Dashboard", icon: Home, path: "/" },
-  { id: "horoscope", label: "Horóscopo", icon: Sun, path: "/horoscopo" },
-  { id: "compatibility", label: "Amor", icon: Heart, path: "/compatibilidade" },
-  { id: "oracle", label: "Oracle", icon: Brain, path: "/ia-vidente" },
-  { id: "astral", label: "Mapa Astral", icon: Map, path: "/mapa-astral" },
-  { id: "tarot", label: "Tarot", icon: Sparkles, path: "/tarot" }
-];
+import { useLanguageNavigation } from "@/hooks/useLanguageNavigation";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export const TabNavigation = () => {
   const location = useLocation();
-  const navigate = useNavigate();
+  const { navigate, routes } = useLanguageNavigation();
+  const { t } = useTranslation();
+
+  const tabs = [
+    { id: "dashboard", label: t("navigation.dashboard"), icon: Home, path: routes.dashboard },
+    { id: "horoscope", label: t("navigation.horoscope"), icon: Sun, path: routes.horoscope },
+    { id: "compatibility", label: t("navigation.compatibility"), icon: Heart, path: routes.compatibility },
+    { id: "oracle", label: t("navigation.oracle"), icon: Brain, path: routes.oracle },
+    { id: "astral", label: t("navigation.astralMap"), icon: Map, path: routes.astralMap },
+    { id: "tarot", label: t("navigation.tarot"), icon: Sparkles, path: routes.tarot }
+  ];
 
   const isActive = (path: string) => {
     if (path === "/" && location.pathname === "/") return true;
